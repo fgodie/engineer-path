@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="535" viewBox="0 0 920 535" role="img" aria-labelledby="title desc">
+<title id="title">Find the domain controller, then authenticate / 先发现域控，再完成身份认证</title><desc id="desc">The client queries DNS SRV records to find a domain controller, then authenticates to the domain controller. File access still requires separate authorization. 客户端通过 DNS SRV 发现域控，再向域控认证；文件访问仍需单独授权。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="535" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">Find the domain controller, then authenticate</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">先发现域控，再完成身份认证</text>
+<rect x="32" y="197" width="213" height="90" rx="12" fill="#e5f2e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="138.5" y="236.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Domain client</text>
+<text x="138.5" y="261.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">域客户端</text>
+<rect x="660" y="135" width="228" height="86" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="774.0" y="172.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">DNS server</text>
+<text x="774.0" y="197.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">DNS 服务器</text>
+<rect x="660" y="312" width="228" height="86" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="774.0" y="349.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Domain controller</text>
+<text x="774.0" y="374.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">域控制器</text>
+<path d="M246 216 L655 172" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="448" y="147" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">1. Query SRV records</text>
+<text x="448" y="172" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">查询服务记录</text>
+<path d="M660 211 L248 258" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="448" y="268" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">2. Return DC location</text>
+<text x="448" y="293" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">返回域控位置</text>
+<path d="M246 283 L655 355" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="448" y="346" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">3. Authenticate</text>
+<text x="448" y="371" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">身份认证</text>
+<rect x="32" y="425" width="856" height="85" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="52" y="454" fill="#203e35" font-size="20" text-anchor="start" font-weight="600">Authentication ≠ authorization</text>
+<text x="52" y="479" fill="#567367" font-size="16" text-anchor="start" font-weight="400">身份认证 ≠ 资源授权；访问文件仍需检查共享权限与 NTFS 权限。</text>
+</svg>

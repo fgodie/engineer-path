@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="470" viewBox="0 0 920 470" role="img" aria-labelledby="title desc">
+<title id="title">One /24, four /26 subnets / 一个 /24，划分为四个 /26 子网</title><desc id="desc">192.168.10.0/24 splits into .0/26, .64/26, .128/26 and .192/26. Address .70 belongs to .64/26. 一个 /24 分成四个 /26，.70 属于 .64/26。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="470" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">One /24, four /26 subnets</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">一个 /24，划分为四个 /26 子网</text>
+<rect x="32" y="132" width="856" height="62" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="460.0" y="157.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">192.168.10.0/24 → 256 addresses</text>
+<text x="460.0" y="182.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">256 个地址，每个 /26 包含 64 个地址</text>
+<rect x="32" y="216" width="202" height="78" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="133.0" y="249.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.0/26</text>
+<text x="133.0" y="274.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">.0 – .63</text>
+<rect x="250" y="216" width="202" height="78" rx="12" fill="#dff2e7" stroke="#087b5e" stroke-width="1.5"/>
+<text x="351.0" y="249.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.64/26</text>
+<text x="351.0" y="274.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">.64 – .127</text>
+<rect x="468" y="216" width="202" height="78" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="569.0" y="249.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.128/26</text>
+<text x="569.0" y="274.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">.128 – .191</text>
+<rect x="686" y="216" width="202" height="78" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="787.0" y="249.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.192/26</text>
+<text x="787.0" y="274.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">.192 – .255</text>
+<path d="M351 294 L351 325" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="32" y="332" width="856" height="99" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="50" y="359" fill="#203e35" font-size="17" text-anchor="start" font-weight="600">192.168.10.64/26</text>
+<text x="50" y="384" fill="#567367" font-size="16" text-anchor="start" font-weight="400">子网掩码 / Mask: 255.255.255.192</text>
+<text x="418" y="359" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.64</text>
+<text x="418" y="384" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">Network / 网络</text>
+<text x="583" y="359" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.65 – .126</text>
+<text x="583" y="384" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">Hosts / 主机</text>
+<text x="785" y="359" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">.127</text>
+<text x="785" y="384" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">Broadcast / 广播</text>
+<text x="32" y="455" fill="#087b5e" font-size="15" text-anchor="start" font-weight="400">Example / 示例: 192.168.10.70 ∈ 192.168.10.64/26 · 62 usable hosts / 62 个可用主机地址</text>
+</svg>

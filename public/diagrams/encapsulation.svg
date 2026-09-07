@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="480" viewBox="0 0 920 480" role="img" aria-labelledby="title desc">
+<title id="title">How data becomes a frame / 数据如何封装成一帧</title><desc id="desc">Each layer adds information: application data, TCP header, IP header and Ethernet framing. 各层逐步添加信息：应用数据、TCP 头部、IP 头部与以太网帧结构。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="480" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">How data becomes a frame</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">数据如何封装成一帧</text>
+<text x="34" y="160" fill="#203e35" font-size="17" text-anchor="start" font-weight="600">Application</text>
+<text x="34" y="185" fill="#567367" font-size="16" text-anchor="start" font-weight="400">应用层</text>
+<rect x="220" y="140" width="517" height="57" rx="5" fill="#e4f3e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="478.5" y="163" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">Application data</text>
+<text x="478.5" y="188" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">应用数据</text>
+<path d="M785 162 L785 217" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="34" y="230" fill="#203e35" font-size="17" text-anchor="start" font-weight="600">Transport</text>
+<text x="34" y="255" fill="#567367" font-size="16" text-anchor="start" font-weight="400">传输层</text>
+<rect x="220" y="210" width="142" height="57" rx="5" fill="#dceaf9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="291.0" y="233" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">TCP header</text>
+<text x="291.0" y="258" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">TCP 头部</text>
+<rect x="365" y="210" width="372" height="57" rx="5" fill="#e4f3e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="551.0" y="233" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">Data</text>
+<text x="551.0" y="258" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">数据</text>
+<path d="M785 232 L785 287" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="34" y="300" fill="#203e35" font-size="17" text-anchor="start" font-weight="600">Network</text>
+<text x="34" y="325" fill="#567367" font-size="16" text-anchor="start" font-weight="400">网络层</text>
+<rect x="220" y="280" width="127" height="57" rx="5" fill="#fff0d9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="283.5" y="303" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">IP header</text>
+<text x="283.5" y="328" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">IP 头部</text>
+<rect x="350" y="280" width="127" height="57" rx="5" fill="#dceaf9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="413.5" y="303" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">TCP</text>
+<text x="413.5" y="328" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">TCP 头部</text>
+<rect x="480" y="280" width="257" height="57" rx="5" fill="#e4f3e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="608.5" y="303" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">Data</text>
+<text x="608.5" y="328" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">数据</text>
+<path d="M785 302 L785 357" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="34" y="370" fill="#203e35" font-size="17" text-anchor="start" font-weight="600">Link</text>
+<text x="34" y="395" fill="#567367" font-size="16" text-anchor="start" font-weight="400">链路层</text>
+<rect x="220" y="350" width="97" height="57" rx="5" fill="#ece4f5" stroke="#cbded4" stroke-width="1.5"/>
+<text x="268.5" y="373" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">Ethernet</text>
+<text x="268.5" y="398" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">帧头</text>
+<rect x="320" y="350" width="97" height="57" rx="5" fill="#fff0d9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="368.5" y="373" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">IP</text>
+<text x="368.5" y="398" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">IP 头部</text>
+<rect x="420" y="350" width="97" height="57" rx="5" fill="#dceaf9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="468.5" y="373" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">TCP</text>
+<text x="468.5" y="398" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">TCP 头部</text>
+<rect x="520" y="350" width="152" height="57" rx="5" fill="#e4f3e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="596.0" y="373" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">Data</text>
+<text x="596.0" y="398" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">数据</text>
+<rect x="675" y="350" width="62" height="57" rx="5" fill="#ece4f5" stroke="#cbded4" stroke-width="1.5"/>
+<text x="706.0" y="373" fill="#203e35" font-size="15" text-anchor="middle" font-weight="600">FCS</text>
+<text x="706.0" y="398" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">校验</text>
+<text x="814" y="255" fill="#087b5e" font-size="14" text-anchor="middle" font-weight="600">SEND</text>
+<text x="814" y="280" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">发送</text>
+<text x="32" y="449" fill="#567367" font-size="15" text-anchor="start" font-weight="400">TCP over IPv4 over Ethernet example · Logical layout, not byte scale.</text>
+<text x="32" y="472" fill="#567367" font-size="15" text-anchor="start" font-weight="400">以 TCP / IPv4 / Ethernet 为例；示意结构并非按字节比例绘制。</text>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="535" viewBox="0 0 920 535" role="img" aria-labelledby="title desc">
+<title id="title">Virtual machines share one host / 虚拟机共享同一台物理主机</title><desc id="desc">Three independent virtual machines run on one hypervisor and share physical CPU, memory, storage and network resources. 三台虚拟机运行在同一虚拟化层之上，共享物理资源，也共享主机故障域。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="535" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">Virtual machines share one host</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">虚拟机共享同一台物理主机</text>
+<rect x="32" y="145" width="270" height="93" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="167.0" y="185.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Windows VM</text>
+<text x="167.0" y="210.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">Windows 虚拟机</text>
+<path d="M167 240 L167 281" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="324" y="145" width="270" height="93" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="459.0" y="185.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Linux VM</text>
+<text x="459.0" y="210.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">Linux 虚拟机</text>
+<path d="M459 240 L459 281" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="616" y="145" width="270" height="93" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="751.0" y="185.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Lab VM</text>
+<text x="751.0" y="210.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">实验虚拟机</text>
+<path d="M751 240 L751 281" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="32" y="285" width="856" height="70" rx="12" fill="#dff2e7" stroke="#cbded4" stroke-width="1.5"/>
+<text x="460.0" y="314.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Hypervisor / Hyper-V</text>
+<text x="460.0" y="339.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">虚拟化层 · 隔离与分配资源</text>
+<path d="M460 355 L460 380" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="32" y="385" width="856" height="75" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="460.0" y="416.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Physical host: CPU · RAM · Storage · Network</text>
+<text x="460.0" y="441.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">物理主机：处理器 · 内存 · 存储 · 网络</text>
+<text x="32" y="489" fill="#203e35" font-size="16" text-anchor="start" font-weight="400">VM isolation does not remove a shared host failure domain.</text>
+<text x="32" y="515" fill="#567367" font-size="16" text-anchor="start" font-weight="400">虚拟机相互隔离，并不消除共同的主机故障域；主机故障可能影响其上的全部虚拟机。</text>
+</svg>

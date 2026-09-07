@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="505" viewBox="0 0 920 505" role="img" aria-labelledby="title desc">
+<title id="title">RPO and RTO describe different gaps / RPO 与 RTO 衡量不同的时间间隔</title><desc id="desc">A restore point at 09:00, a failure at 10:00 and verified service recovery at 10:40 illustrate a one-hour data gap and forty-minute recovery duration. 09:00 恢复点、10:00 故障、10:40 验证恢复，示例数据回退一小时、恢复用时四十分钟。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="505" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">RPO and RTO describe different gaps</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">RPO 与 RTO 衡量不同的时间间隔</text>
+<path d="M83 257 L852 257" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<circle cx="125" cy="257" r="7" fill="#087b5e"/>
+<text x="125" y="220" fill="#087b5e" font-size="26" text-anchor="middle" font-weight="600">09:00</text>
+<text x="125" y="291" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">Restore point</text>
+<text x="125" y="316" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">可用恢复点</text>
+<circle cx="500" cy="257" r="7" fill="#ad4e35"/>
+<text x="500" y="220" fill="#ad4e35" font-size="26" text-anchor="middle" font-weight="600">10:00</text>
+<text x="500" y="291" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">Failure</text>
+<text x="500" y="316" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">故障发生</text>
+<circle cx="812" cy="257" r="7" fill="#236bb3"/>
+<text x="812" y="220" fill="#236bb3" font-size="26" text-anchor="middle" font-weight="600">10:40</text>
+<text x="812" y="291" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">Service verified</text>
+<text x="812" y="316" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">服务验证通过</text>
+<rect x="125" y="151" width="375" height="40" rx="5" fill="#fff0d9" stroke="#dcc18f" stroke-width="1.5"/>
+<text x="312" y="177" fill="#9d5e13" font-size="17" text-anchor="middle" font-weight="600">Data gap / 数据回退: 1 h</text>
+<rect x="500" y="151" width="312" height="40" rx="5" fill="#e5effa" stroke="#aac5e5" stroke-width="1.5"/>
+<text x="656" y="177" fill="#236bb3" font-size="17" text-anchor="middle" font-weight="600">Recovery / 恢复: 40 min</text>
+<rect x="32" y="365" width="856" height="114" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="52" y="393" fill="#203e35" font-size="18" text-anchor="start" font-weight="600">RPO: acceptable data-loss window. RTO: target recovery duration.</text>
+<text x="52" y="422" fill="#567367" font-size="17" text-anchor="start" font-weight="400">RPO：可容忍的数据丢失窗口。RTO：目标恢复时间。</text>
+<text x="52" y="452" fill="#567367" font-size="15" text-anchor="start" font-weight="400">Compare this measured example with your business targets. / 将本例实际结果与业务目标比较。</text>
+</svg>

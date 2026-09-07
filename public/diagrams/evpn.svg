@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560" role="img" aria-labelledby="title desc">
+<title id="title">Underlay and overlay / 底层网络与覆盖网络</title><desc id="desc">Spine connects two leaf VTEPs through routed IP links. A logical VXLAN tunnel connects tenant hosts in VNI 10010. Spine 通过 IP 链路连接两个 Leaf VTEP，逻辑 VXLAN 隧道承载同一 VNI 的租户流量。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="560" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">Underlay and overlay</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">底层网络与覆盖网络</text>
+<rect x="332" y="132" width="256" height="70" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="460.0" y="161.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Spine / Underlay IP</text>
+<text x="460.0" y="186.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">Spine · 底层 IP 转发</text>
+<path d="M355 202 L242 273" fill="none" stroke="#087b5e" stroke-width="2.5"/>
+<path d="M565 202 L678 273" fill="none" stroke="#087b5e" stroke-width="2.5"/>
+<rect x="117" y="276" width="250" height="82" rx="12" fill="#e5f2e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="242.0" y="311.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Leaf 1 / VTEP 1</text>
+<text x="242.0" y="336.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">VTEP IP: 10.0.0.1</text>
+<rect x="553" y="276" width="250" height="82" rx="12" fill="#e5f2e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="678.0" y="311.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Leaf 2 / VTEP 2</text>
+<text x="678.0" y="336.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">VTEP IP: 10.0.0.2</text>
+<path d="M369 318 L550 318" fill="none" stroke="#087b5e" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+<text x="460" y="246" fill="#203e35" font-size="17" text-anchor="middle" font-weight="600">VXLAN overlay</text>
+<text x="460" y="271" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">逻辑隧道 · VNI 10010</text>
+<path d="M242 358 L242 392" fill="none" stroke="#087b5e" stroke-width="2.5"/>
+<path d="M678 358 L678 392" fill="none" stroke="#087b5e" stroke-width="2.5"/>
+<rect x="117" y="395" width="250" height="73" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="242.0" y="425.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Tenant host A</text>
+<text x="242.0" y="450.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">租户主机 A · VLAN 10</text>
+<rect x="553" y="395" width="250" height="73" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="678.0" y="425.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Tenant host B</text>
+<text x="678.0" y="450.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">租户主机 B · VLAN 10</text>
+<text x="32" y="505" fill="#203e35" font-size="16" text-anchor="start" font-weight="400">Solid lines: physical IP links. Dashed line: logical VXLAN tunnel, not a direct cable.</text>
+<text x="32" y="530" fill="#567367" font-size="16" text-anchor="start" font-weight="400">实线：物理 IP 链路。虚线：逻辑 VXLAN 隧道，并非直连网线。EVPN 分发可达信息。</text>
+</svg>

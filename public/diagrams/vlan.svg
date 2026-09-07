@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="540" viewBox="0 0 920 540" role="img" aria-labelledby="title desc">
+<title id="title">VLANs separate; routing connects / VLAN 做隔离，路由实现跨网段连接</title><desc id="desc">Hosts share a VLAN at Layer 2. Traffic between VLAN 10 and VLAN 20 goes through a Layer 3 gateway and permitted policy. 同 VLAN 二层通信，跨 VLAN 需三层网关和允许策略。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#087b5e"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="920" height="540" fill="#f5faf7" rx="16"/>
+<text x="32" y="38" fill="#087b5e" font-size="13" text-anchor="start" font-weight="600">ENGINEER PATH  /  VISUAL GUIDE</text>
+<text x="32" y="77" fill="#203e35" font-size="25" text-anchor="start" font-weight="600">VLANs separate; routing connects</text>
+<text x="32" y="102" fill="#567367" font-size="16" text-anchor="start" font-weight="400">VLAN 做隔离，路由实现跨网段连接</text>
+<rect x="32" y="135" width="402" height="215" rx="12" fill="#e5f2e9" stroke="#cbded4" stroke-width="1.5"/>
+<text x="52" y="165" fill="#203e35" font-size="21" text-anchor="start" font-weight="600">VLAN 10</text>
+<text x="52" y="190" fill="#567367" font-size="16" text-anchor="start" font-weight="400">192.168.10.0/24</text>
+<rect x="52" y="222" width="150" height="82" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="127.0" y="257.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Host A</text>
+<text x="127.0" y="282.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">终端 · .10</text>
+<rect x="264" y="222" width="150" height="82" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="339.0" y="257.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Host B</text>
+<text x="339.0" y="282.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">终端 · .20</text>
+<path d="M202 263 L261 263" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="486" y="135" width="402" height="215" rx="12" fill="#e5effa" stroke="#cbded4" stroke-width="1.5"/>
+<text x="506" y="165" fill="#203e35" font-size="21" text-anchor="start" font-weight="600">VLAN 20</text>
+<text x="506" y="190" fill="#567367" font-size="16" text-anchor="start" font-weight="400">192.168.20.0/24</text>
+<rect x="506" y="222" width="150" height="82" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="581.0" y="257.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Host C</text>
+<text x="581.0" y="282.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">终端 · .10</text>
+<rect x="718" y="222" width="150" height="82" rx="12" fill="#fff" stroke="#cbded4" stroke-width="1.5"/>
+<text x="793.0" y="257.0" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Host D</text>
+<text x="793.0" y="282.0" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">终端 · .20</text>
+<path d="M656 263 L715 263" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M233 350 L233 400" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M687 350 L687 400" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M233 400 L330 400" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M687 400 L590 400" fill="none" stroke="#087b5e" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="332" y="370" width="256" height="85" rx="12" fill="#fff" stroke="#087b5e" stroke-width="1.5"/>
+<text x="460.0" y="406.5" fill="#203e35" font-size="18" text-anchor="middle" font-weight="600">Layer 3 gateway</text>
+<text x="460.0" y="431.5" fill="#567367" font-size="16" text-anchor="middle" font-weight="400">三层网关 + 访问策略</text>
+<text x="32" y="480" fill="#203e35" font-size="16" text-anchor="start" font-weight="400">One physical switch can contain both VLANs. Inter-VLAN traffic requires routing.</text>
+<text x="32" y="507" fill="#567367" font-size="16" text-anchor="start" font-weight="400">同一台物理交换机可承载两个 VLAN；跨 VLAN 通信需要路由并满足访问策略。</text>
+</svg>

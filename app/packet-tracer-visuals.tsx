@@ -31,7 +31,7 @@ export function PacketTopology({ lab }: { lab: PacketTracerLab }) {
     ];
     wires = [
       { from: [172, 150], to: [398, 150], label: 'Fa0 ↔ Fa0/1' },
-      { from: [522, 150], to: [748, 150], label: 'Fa0/2 ↔ Fa0' },
+      { from: [522, 150], to: [748, 150], label: 'Fa0/10 ↔ Fa0' },
     ];
     note = { en: 'One subnet · no router or default gateway needed', zh: '同一子网 · 无需路由器或默认网关' };
   } else if (lab.id === 'routing') {

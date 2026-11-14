@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "vinext dev",
     "build": "vinext build",
-    "build:pages": "NEXT_PUBLIC_BASE_PATH=/engineer-path vinext build && node scripts/prepare-github-pages.mjs",
+    "build:pages": "node scripts/build-github-pages.mjs",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt"

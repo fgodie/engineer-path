@@ -31,3 +31,9 @@ npm run build:pages
 `app/lessons.ts` 保留中文课程，`app/english.ts` 提供按课程 ID 对应的完整英文翻译，`app/interface-translations.ts` 提供界面及命令注释翻译。每个段落、实验步骤、题目、选项和解释同时显示两种语言。`app/lesson-diagrams.ts` 管理图解与课程段落的对应关系，`scripts/create-diagrams.py` 可重新生成 `public/diagrams` 中的 SVG 文件。
 
 `app/page.tsx` 提供学习路径、课程阅读、实验、自测、岗位对照和参考资料。课程选择和自测答案为本次页面会话状态，刷新后重置。本站不收集学习者信息。
+
+## Cisco Packet Tracer 引导实验
+
+学习路径和课程 n01、n02、n04 现在可以进入三项递进实验：同网段通信、跨网段路由、VLAN 间通信。`app/packet-tracer-labs.ts` 保存中英双语的拓扑、端口、地址、配置、验证与排错内容；`app/packet-tracer-guide.tsx` 呈现步骤清单。勾选进度仅写入学习者当前浏览器的 localStorage。Packet Tracer 需从 Cisco Networking Academy 单独获取并在电脑上运行；网站不会打开、读取或修改 `.pkt` 文件。
+
+`npm run build:pages` 可在 Windows、macOS 和 Linux 上执行。GitHub Actions 推送 `main` 后仍按现有流程部署 GitHub Pages。

@@ -24,14 +24,14 @@ export const packetTracerLabs: PacketTracerLab[] = [
     question: { en: 'How does one PC find another on the same subnet?', zh: '同一网段的两台电脑如何找到彼此？' },
     principle: { en: 'The sender uses ARP to learn the destination MAC address. The switch forwards the Ethernet frame within the same VLAN.', zh: '发送方先用 ARP 获取目标 MAC 地址，交换机再在同一 VLAN 内转发以太网帧。' },
     devices: { en: '2 × PC-PT, 1 × 2960 switch, 2 × copper straight-through cable', zh: '2 台 PC-PT、1 台 2960 交换机、2 根直通铜缆' },
-    links: [{ from: 'PC-A FastEthernet0', to: 'S1 FastEthernet0/1' }, { from: 'PC-B FastEthernet0', to: 'S1 FastEthernet0/2' }],
+    links: [{ from: 'PC-A FastEthernet0', to: 'S1 FastEthernet0/1' }, { from: 'PC-B FastEthernet0', to: 'S1 FastEthernet0/10' }],
     addresses: [
       { device: 'PC-A', ip: '192.168.10.10', mask: '255.255.255.0', gateway: '—' },
       { device: 'PC-B', ip: '192.168.10.11', mask: '255.255.255.0', gateway: '—' },
     ],
     steps: [
       { title: { en: 'Place and connect', zh: '放置并连线' }, detail: { en: 'In Logical view, place the two PCs and one switch. Connect the exact ports shown above. Wait for the links to initialize.', zh: '在 Logical 视图放置两台电脑和交换机，按上方端口表连线，等待链路初始化。' }, expect: { en: 'Two cables connect PC-A → S1 → PC-B and their link lights turn green.', zh: '两根线形成 PC-A → S1 → PC-B，链路指示灯变绿。' } },
-      { title: { en: 'Set the PC addresses', zh: '配置电脑地址' }, detail: { en: 'On each PC, open Desktop → IP Configuration and enter its IP address and mask. Leave Default Gateway empty for this local-only lab.', zh: '在每台电脑的 Desktop → IP Configuration 填入地址和掩码。本实验只在本地网段通信，默认网关留空。' }, expect: { en: 'PC-A shows 192.168.10.10/24 and PC-B shows 192.168.10.11/24; neither has a gateway.', zh: 'PC-A 显示 192.168.10.10/24，PC-B 显示 192.168.10.11/24，两者网关均为空。' } },
+      { title: { en: 'Set the PC addresses', zh: '配置电脑地址' }, detail: { en: 'On each PC, open Desktop → IP Configuration and enter its IP address and mask. Leave Default Gateway unchanged for this local-only lab.', zh: '在每台电脑的 Desktop → IP Configuration 填入地址和掩码。本实验只在本地网段通信，默认网关保持不变。' }, expect: { en: 'PC-A shows 192.168.10.10/24 and PC-B shows 192.168.10.11/24; the gateway field remains 0.0.0.0 (not set).', zh: 'PC-A 显示 192.168.10.10/24，PC-B 显示 192.168.10.11/24；网关字段保持 0.0.0.0（未设置）。' } },
       { title: { en: 'Watch, then ping', zh: '先观察，再测试' }, detail: { en: 'Before the first ping, use Simulation as described below to see ARP. Then open PC-A Desktop → Command Prompt and run ping 192.168.10.11. Repeat if the first attempt times out.', zh: '第一次 ping 前先按下方说明在 Simulation 观察 ARP，再在 PC-A 的 Desktop → Command Prompt 执行 ping 192.168.10.11。若首次超时，再执行一次。' }, expect: { en: 'An ARP exchange precedes ICMP, then PC-A receives replies from PC-B.', zh: '先出现 ARP 交换，再出现 ICMP；随后 PC-A 收到 PC-B 的响应。' } },
     ],
     configs: [{ device: 'PC-A · Command Prompt', code: 'ping 192.168.10.11\narp -a', step: 2 }],

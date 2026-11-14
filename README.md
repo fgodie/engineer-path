@@ -34,6 +34,6 @@ npm run build:pages
 
 ## Cisco Packet Tracer 引导实验
 
-学习路径和课程 n01、n02、n04 现在可以进入三项递进实验：同网段通信、跨网段路由、VLAN 间通信。`app/packet-tracer-labs.ts` 保存中英双语的拓扑、端口、地址、配置、验证与排错内容；`app/packet-tracer-guide.tsx` 呈现步骤清单。勾选进度仅写入学习者当前浏览器的 localStorage。Packet Tracer 需从 Cisco Networking Academy 单独获取并在电脑上运行；网站不会打开、读取或修改 `.pkt` 文件。
+学习路径和课程 n01、n02、n04 现在可以进入三项递进实验：同网段通信、跨网段路由、VLAN 间通信。`app/packet-tracer-labs.ts` 保存中英双语的端口、地址、配置、每步预期结果与排错内容；`app/packet-tracer-visuals.tsx` 提供原创拓扑图和界面操作示意，`app/packet-tracer-guide.tsx` 呈现图文步骤与清单。图是教学示意，不是 Packet Tracer 截图。勾选进度仅写入学习者当前浏览器的 localStorage。Packet Tracer 需从 Cisco Networking Academy 单独获取并在电脑上运行；网站不会打开、读取或修改 `.pkt` 文件。
 
 `npm run build:pages` 可在 Windows、macOS 和 Linux 上执行。GitHub Actions 推送 `main` 后仍按现有流程部署 GitHub Pages。

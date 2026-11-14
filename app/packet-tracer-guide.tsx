@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Check, Circle, Clock3, FlaskConical, Network, RotateCcw } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Circle, Clock3, FlaskConical, RotateCcw } from 'lucide-react';
 import { packetTracerLabs, type Pair } from './packet-tracer-labs';
+import { PacketStepVisual, PacketTopology, SimulationVisual } from './packet-tracer-visuals';
 
 function B({ value }: { value: Pair }) {
   return <span className="bi"><span lang="en" className="bi-en">{value.en}</span><span lang="zh-CN" className="bi-zh">{value.zh}</span></span>;
@@ -59,18 +60,24 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
 
       <h3><B value={{ en: '1. Prepare the topology', zh: '1. 准备拓扑' }} /></h3>
       <p className="pt-muted"><B value={lab.devices} /></p>
-      <div className="pt-topology" role="img" aria-label={lab.links.map((link) => `${link.from} to ${link.to}`).join('; ')}>
-        {(lab.id === 'lan' ? ['PC-A', 'S1', 'PC-B'] : lab.id === 'routing' ? ['PC-A', 'S1', 'R1', 'S2', 'PC-B'] : ['PC-A · VLAN 10', 'S1', 'R1', 'S1', 'PC-B · VLAN 20']).map((node, index, array) => <span className="pt-topology-part" key={`${node}-${index}`}><span>{node}</span>{index < array.length - 1 && <i aria-hidden="true">→</i>}</span>)}
-      </div>
+      <PacketTopology lab={lab} />
       <div className="pt-table-wrap"><table><caption><B value={{ en: 'Cable and port map', zh: '连线与端口表' }} /></caption><thead><tr><th><B value={{ en: 'From', zh: '起点' }} /></th><th><B value={{ en: 'To', zh: '终点' }} /></th></tr></thead><tbody>{lab.links.map((link) => <tr key={link.from}><td>{link.from}</td><td>{link.to}</td></tr>)}</tbody></table></div>
       <div className="pt-table-wrap"><table><caption><B value={{ en: 'Address plan', zh: '地址规划表' }} /></caption><thead><tr><th><B value={{ en: 'Device', zh: '设备' }} /></th><th>IP</th><th><B value={{ en: 'Mask', zh: '掩码' }} /></th><th><B value={{ en: 'Gateway', zh: '网关' }} /></th></tr></thead><tbody>{lab.addresses.map((row) => <tr key={row.device}><td>{row.device}</td><td>{row.ip}</td><td>{row.mask}</td><td>{row.gateway}</td></tr>)}</tbody></table></div>
 
-      <h3><B value={{ en: '2. Build and verify', zh: '2. 搭建并验证' }} /></h3>
+      <h3><B value={{ en: '2. Follow each step', zh: '2. 跟着步骤操作' }} /></h3>
       <p className="pt-muted"><B value={{ en: 'Mark a step after you have checked its result in Packet Tracer.', zh: '在 Packet Tracer 中核对结果后，再勾选步骤。' }} /></p>
-      <div className="pt-steps">{lab.steps.map((step, index) => <button type="button" key={step.title.en} className={done.includes(index) ? 'done' : ''} aria-pressed={done.includes(index)} onClick={() => toggleStep(index)}>{done.includes(index) ? <Check size={20} /> : <Circle size={20} />}<span><strong><B value={step.title} /></strong><B value={step.detail} /></span></button>)}</div>
-      {lab.configs.map((config) => <div className="pt-config" key={config.device}><h4>{config.device}</h4><pre><code>{config.code}</code></pre></div>)}
+      <div className="pt-steps">{lab.steps.map((step, index) => <div className={`pt-step-card ${done.includes(index) ? 'done' : ''}`} key={step.title.en}>
+        <div className="pt-step-number">{String(index + 1).padStart(2, '0')}</div>
+        <div className="pt-step-content"><h4><B value={step.title} /></h4><p><B value={step.detail} /></p>
+          <PacketStepVisual lab={lab} index={index} />
+          {lab.configs.filter((config) => config.step === index).map((config) => <div className="pt-config" key={config.device}><h5>{config.device}</h5><pre><code>{config.code}</code></pre></div>)}
+          <div className="pt-step-expect"><strong><B value={{ en: 'What you should see', zh: '这一步应该看到' }} /></strong><p><B value={step.expect} /></p></div>
+          <button type="button" className="pt-step-check" aria-pressed={done.includes(index)} onClick={() => toggleStep(index)}>{done.includes(index) ? <Check size={18} /> : <Circle size={18} />}<B value={done.includes(index) ? { en: 'Checked · click to undo', zh: '已完成 · 点击撤销' } : { en: 'I checked this result', zh: '已核对，完成这一步' }} /></button>
+        </div>
+      </div>)}</div>
 
       <h3><B value={{ en: '3. Watch the packet', zh: '3. 观察数据包' }} /></h3>
+      {lab.id === 'vlan' && <SimulationVisual lab={lab} />}
       <ul className="pt-list">{lab.observe.map((item) => <li key={item.en}><B value={item} /></li>)}</ul>
       <div className="pt-result-grid"><section><h3><B value={{ en: 'Success looks like', zh: '成功标准' }} /></h3><ul>{lab.success.map((item) => <li key={item.en}><B value={item} /></li>)}</ul></section><section><h3><B value={{ en: 'If it fails', zh: '失败时检查' }} /></h3><ul>{lab.troubleshoot.map((item) => <li key={item.en}><B value={item} /></li>)}</ul></section></div>
       <div className="pt-challenge"><strong><B value={{ en: 'Explain before you test', zh: '先预测，再动手' }} /></strong><p><B value={lab.challenge} /></p></div>

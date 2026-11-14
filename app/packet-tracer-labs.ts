@@ -9,8 +9,8 @@ export type PacketTracerLab = {
   devices: Pair;
   links: { from: string; to: string }[];
   addresses: { device: string; ip: string; mask: string; gateway: string }[];
-  steps: { title: Pair; detail: Pair }[];
-  configs: { device: string; code: string }[];
+  steps: { title: Pair; detail: Pair; expect: Pair }[];
+  configs: { device: string; code: string; step: number }[];
   observe: Pair[];
   success: Pair[];
   troubleshoot: Pair[];
@@ -30,11 +30,11 @@ export const packetTracerLabs: PacketTracerLab[] = [
       { device: 'PC-B', ip: '192.168.10.11', mask: '255.255.255.0', gateway: '—' },
     ],
     steps: [
-      { title: { en: 'Place and connect', zh: '放置并连线' }, detail: { en: 'In Logical view, place the two PCs and one switch. Connect the exact ports shown below. Wait until the link indicators turn green.', zh: '在 Logical 视图放置两台电脑和交换机，按下方端口表连线，等待链路指示灯变绿。' } },
-      { title: { en: 'Set the PC addresses', zh: '配置电脑地址' }, detail: { en: 'On each PC, open Desktop → IP Configuration and enter its IP address and mask. Leave Default Gateway empty for this local-only lab.', zh: '在每台电脑的 Desktop → IP Configuration 填入地址和掩码。本实验只在本地网段通信，默认网关留空。' } },
-      { title: { en: 'Watch, then ping', zh: '先观察，再测试' }, detail: { en: 'Before the first ping, use Simulation as described below to see ARP. Then open PC-A Desktop → Command Prompt and run ping 192.168.10.11. Repeat if the first attempt times out.', zh: '第一次 ping 前先按下方说明在 Simulation 观察 ARP，再在 PC-A 的 Desktop → Command Prompt 执行 ping 192.168.10.11。若首次超时，再执行一次。' } },
+      { title: { en: 'Place and connect', zh: '放置并连线' }, detail: { en: 'In Logical view, place the two PCs and one switch. Connect the exact ports shown above. Wait for the links to initialize.', zh: '在 Logical 视图放置两台电脑和交换机，按上方端口表连线，等待链路初始化。' }, expect: { en: 'Two cables connect PC-A → S1 → PC-B and their link lights turn green.', zh: '两根线形成 PC-A → S1 → PC-B，链路指示灯变绿。' } },
+      { title: { en: 'Set the PC addresses', zh: '配置电脑地址' }, detail: { en: 'On each PC, open Desktop → IP Configuration and enter its IP address and mask. Leave Default Gateway empty for this local-only lab.', zh: '在每台电脑的 Desktop → IP Configuration 填入地址和掩码。本实验只在本地网段通信，默认网关留空。' }, expect: { en: 'PC-A shows 192.168.10.10/24 and PC-B shows 192.168.10.11/24; neither has a gateway.', zh: 'PC-A 显示 192.168.10.10/24，PC-B 显示 192.168.10.11/24，两者网关均为空。' } },
+      { title: { en: 'Watch, then ping', zh: '先观察，再测试' }, detail: { en: 'Before the first ping, use Simulation as described below to see ARP. Then open PC-A Desktop → Command Prompt and run ping 192.168.10.11. Repeat if the first attempt times out.', zh: '第一次 ping 前先按下方说明在 Simulation 观察 ARP，再在 PC-A 的 Desktop → Command Prompt 执行 ping 192.168.10.11。若首次超时，再执行一次。' }, expect: { en: 'An ARP exchange precedes ICMP, then PC-A receives replies from PC-B.', zh: '先出现 ARP 交换，再出现 ICMP；随后 PC-A 收到 PC-B 的响应。' } },
     ],
-    configs: [{ device: 'PC-A · Command Prompt', code: 'ping 192.168.10.11\narp -a' }],
+    configs: [{ device: 'PC-A · Command Prompt', code: 'ping 192.168.10.11\narp -a', step: 2 }],
     observe: [
       { en: 'Before the first ping, switch to Simulation, filter for ARP and ICMP, then send a Simple PDU from PC-A to PC-B. Use Capture/Forward to step through the events.', zh: '第一次 ping 前切到 Simulation，筛选 ARP 和 ICMP，再从 PC-A 向 PC-B 发送 Simple PDU，用 Capture/Forward 逐步观察。' },
       { en: 'The ARP request is a broadcast; the ARP reply and following ICMP traffic target a learned MAC address.', zh: 'ARP 请求是广播；ARP 响应以及后续 ICMP 流量会发往已学到的 MAC 地址。' },
@@ -62,11 +62,11 @@ export const packetTracerLabs: PacketTracerLab[] = [
       { device: 'PC-B', ip: '192.168.20.10', mask: '255.255.255.0', gateway: '192.168.20.1' },
     ],
     steps: [
-      { title: { en: 'Build two LANs', zh: '搭建两个局域网' }, detail: { en: 'Place the devices and connect the listed ports. The switches keep the two PC links separate until the router forwards between them.', zh: '放置设备并按端口表连线。两侧交换机各承载一个网段，由路由器负责跨网段转发。' } },
-      { title: { en: 'Address PCs and router', zh: '配置电脑与路由器' }, detail: { en: 'Enter the PC addresses in Desktop → IP Configuration. On R1, open CLI and apply the commands below. Interface names assume a 2911 router.', zh: '在 Desktop → IP Configuration 配置电脑地址；打开 R1 的 CLI 执行下方命令。接口名称以 2911 路由器为准。' } },
-      { title: { en: 'Test one hop at a time', zh: '逐跳测试' }, detail: { en: 'Start Simulation before the first ping to watch ARP and ICMP. Ping each PC’s own gateway first, then ping from PC-A to PC-B. On R1, verify both connected networks.', zh: '第一次 ping 前打开 Simulation 观察 ARP 和 ICMP。先从每台电脑 ping 自己的网关，再从 PC-A ping PC-B；最后在 R1 核对两个直连网段。' } },
+      { title: { en: 'Build two LANs', zh: '搭建两个局域网' }, detail: { en: 'Place the devices and connect the listed ports. The two switches each serve one subnet.', zh: '放置设备并按端口表连线，两台交换机各服务一个子网。' }, expect: { en: 'The path is PC-A → S1 → R1 → S2 → PC-B; all four link indicators become green.', zh: '路径为 PC-A → S1 → R1 → S2 → PC-B，四条链路都变绿。' } },
+      { title: { en: 'Address PCs and router', zh: '配置电脑与路由器' }, detail: { en: 'Enter both PC addresses and gateways in Desktop → IP Configuration. On R1, open CLI and apply the commands below. Interface names assume a 2911 router.', zh: '在 Desktop → IP Configuration 配置两台电脑的地址与网关；打开 R1 的 CLI 执行下方命令。接口名称以 2911 为准。' }, expect: { en: 'show ip interface brief reports G0/0 and G0/1 as up/up; show ip route lists both connected /24 networks.', zh: 'show ip interface brief 显示 G0/0、G0/1 为 up/up；show ip route 列出两个直连 /24 网段。' } },
+      { title: { en: 'Test one hop at a time', zh: '逐跳测试' }, detail: { en: 'Start Simulation before the first ping to watch ARP and ICMP. Ping each PC’s own gateway first, then ping from PC-A to PC-B.', zh: '第一次 ping 前打开 Simulation 观察 ARP 和 ICMP。先从每台电脑 ping 自己的网关，再从 PC-A ping PC-B。' }, expect: { en: 'Gateway pings succeed and PC-A receives replies from 192.168.20.10.', zh: '两台电脑都能 ping 通自己的网关，PC-A 收到 192.168.20.10 的响应。' } },
     ],
-    configs: [{ device: 'R1 · CLI', code: 'enable\nconfigure terminal\ninterface gigabitEthernet 0/0\nip address 192.168.10.1 255.255.255.0\nno shutdown\nexit\ninterface gigabitEthernet 0/1\nip address 192.168.20.1 255.255.255.0\nno shutdown\nend\nshow ip interface brief\nshow ip route' }, { device: 'PC-A · Command Prompt', code: 'ping 192.168.10.1\nping 192.168.20.10' }],
+    configs: [{ device: 'R1 · CLI', code: 'enable\nconfigure terminal\ninterface gigabitEthernet 0/0\nip address 192.168.10.1 255.255.255.0\nno shutdown\nexit\ninterface gigabitEthernet 0/1\nip address 192.168.20.1 255.255.255.0\nno shutdown\nend\nshow ip interface brief\nshow ip route', step: 1 }, { device: 'PC-A · Command Prompt', code: 'ping 192.168.10.1\nping 192.168.20.10', step: 2 }],
     observe: [{ en: 'In Simulation, filter ARP and ICMP. PC-A resolves the gateway MAC, not PC-B’s MAC. The destination IP stays PC-B’s address across R1; the Ethernet source and destination change on the second link.', zh: '在 Simulation 筛选 ARP 和 ICMP。PC-A 解析的是网关 MAC，而不是 PC-B 的 MAC。跨过 R1 后目标 IP 仍是 PC-B，下一段链路的以太网源/目的地址会变化。' }],
     success: [{ en: 'Both router interfaces are up/up, each PC reaches its gateway, and PC-A receives replies from 192.168.20.10.', zh: '路由器两个接口均为 up/up，每台电脑能到自己的网关，PC-A 能收到 192.168.20.10 的响应。' }],
     troubleshoot: [{ en: 'If a gateway ping fails, check cabling, no shutdown, the PC mask and gateway. If only cross-subnet ping fails, check both PC gateways and R1’s connected routes.', zh: '若网关 ping 不通，检查连线、no shutdown、电脑掩码与网关；若只在跨网段失败，检查两台电脑的网关和 R1 的直连路由。' }],
@@ -90,14 +90,15 @@ export const packetTracerLabs: PacketTracerLab[] = [
       { device: 'R1 G0/0.20', ip: '192.168.20.1', mask: '255.255.255.0', gateway: '—' },
     ],
     steps: [
-      { title: { en: 'Place devices and set PC IPs', zh: '放置设备并配置电脑 IP' }, detail: { en: 'Connect the listed ports and enter each PC’s IP, /24 mask and gateway under Desktop → IP Configuration.', zh: '按端口表连线，然后在 Desktop → IP Configuration 填写每台电脑的 IP、/24 掩码和网关。' } },
-      { title: { en: 'Create VLANs and a trunk', zh: '建立 VLAN 和 Trunk' }, detail: { en: 'On S1, create VLAN 10 and 20, assign the access ports, and make G0/1 a trunk carrying both VLANs. Verify with show vlan brief and show interfaces trunk.', zh: '在 S1 建立 VLAN 10、20，分配接入口，并让 G0/1 作为承载两个 VLAN 的 Trunk。用 show vlan brief 和 show interfaces trunk 验证。' } },
-      { title: { en: 'Add inter-VLAN routing', zh: '加入 VLAN 间路由' }, detail: { en: 'Before configuring R1, predict whether cross-VLAN ping can work. Then apply the router subinterface commands and test again.', zh: '配置 R1 前先预测跨 VLAN ping 是否能通，再执行路由器子接口命令并重新测试。' } },
+      { title: { en: 'Place devices and set PC IPs', zh: '放置设备并配置电脑 IP' }, detail: { en: 'Connect the listed ports and enter each PC’s IP, /24 mask and gateway under Desktop → IP Configuration.', zh: '按端口表连线，然后在 Desktop → IP Configuration 填写每台电脑的 IP、/24 掩码和网关。' }, expect: { en: 'PC-A connects to S1 F0/1, PC-B to S1 F0/2, and S1 G0/1 to R1 G0/0. Both PCs show their planned addresses.', zh: 'PC-A 接 S1 F0/1，PC-B 接 S1 F0/2，S1 G0/1 接 R1 G0/0；两台电脑显示规划好的地址。' } },
+      { title: { en: 'Create VLANs and a trunk', zh: '建立 VLAN 和 Trunk' }, detail: { en: 'On S1, create VLAN 10 and 20, assign the access ports, and make G0/1 a trunk carrying both VLANs. Verify with show vlan brief and show interfaces trunk.', zh: '在 S1 建立 VLAN 10、20，分配接入口，并让 G0/1 作为承载两个 VLAN 的 Trunk。用 show vlan brief 和 show interfaces trunk 验证。' }, expect: { en: 'show vlan brief places F0/1 in VLAN 10 and F0/2 in VLAN 20; show interfaces trunk lists G0/1 and both allowed VLANs.', zh: 'show vlan brief 显示 F0/1 属于 VLAN 10、F0/2 属于 VLAN 20；show interfaces trunk 显示 G0/1 承载两个 VLAN。' } },
+      { title: { en: 'Add inter-VLAN routing', zh: '加入 VLAN 间路由' }, detail: { en: 'First, ping PC-B from PC-A and record the failure. Then configure R1 subinterfaces and run the same ping again. Compare the two results.', zh: '先从 PC-A ping PC-B，记录失败结果；再配置 R1 子接口，重做同一个 ping，并比较前后差异。' }, expect: { en: 'The cross-VLAN ping fails before R1 has gateways and succeeds after both subinterfaces are up.', zh: 'R1 尚无网关时跨 VLAN ping 失败；两个子接口就绪后 ping 成功。' } },
     ],
     configs: [
-      { device: 'S1 · CLI', code: 'enable\nconfigure terminal\nvlan 10\nname USERS\nexit\nvlan 20\nname LAB\nexit\ninterface fastEthernet 0/1\nswitchport mode access\nswitchport access vlan 10\nexit\ninterface fastEthernet 0/2\nswitchport mode access\nswitchport access vlan 20\nexit\ninterface gigabitEthernet 0/1\nswitchport mode trunk\nswitchport trunk allowed vlan 10,20\nend\nshow vlan brief\nshow interfaces trunk' },
-      { device: 'R1 · CLI', code: 'enable\nconfigure terminal\ninterface gigabitEthernet 0/0\nno shutdown\nexit\ninterface gigabitEthernet 0/0.10\nencapsulation dot1Q 10\nip address 192.168.10.1 255.255.255.0\nexit\ninterface gigabitEthernet 0/0.20\nencapsulation dot1Q 20\nip address 192.168.20.1 255.255.255.0\nend\nshow ip interface brief' },
-      { device: 'PC-A · Command Prompt', code: 'ping 192.168.10.1\nping 192.168.20.10' },
+      { device: 'S1 · CLI', code: 'enable\nconfigure terminal\nvlan 10\nname USERS\nexit\nvlan 20\nname LAB\nexit\ninterface fastEthernet 0/1\nswitchport mode access\nswitchport access vlan 10\nexit\ninterface fastEthernet 0/2\nswitchport mode access\nswitchport access vlan 20\nexit\ninterface gigabitEthernet 0/1\nswitchport mode trunk\nswitchport trunk allowed vlan 10,20\nend\nshow vlan brief\nshow interfaces trunk', step: 1 },
+      { device: 'PC-A · before routing / 路由配置前', code: 'ping 192.168.20.10', step: 2 },
+      { device: 'R1 · CLI', code: 'enable\nconfigure terminal\ninterface gigabitEthernet 0/0\nno shutdown\nexit\ninterface gigabitEthernet 0/0.10\nencapsulation dot1Q 10\nip address 192.168.10.1 255.255.255.0\nexit\ninterface gigabitEthernet 0/0.20\nencapsulation dot1Q 20\nip address 192.168.20.1 255.255.255.0\nend\nshow ip interface brief', step: 2 },
+      { device: 'PC-A · after routing / 路由配置后', code: 'ping 192.168.10.1\nping 192.168.20.10', step: 2 },
     ],
     observe: [{ en: 'In Simulation, compare the failed cross-VLAN attempt before routing with the successful attempt after routing. Inspect the gateway ARP and the tagged trunk path.', zh: '在 Simulation 比较路由配置前失败、配置后成功的跨 VLAN 流量，观察网关 ARP 和 Trunk 上的 VLAN 标记。' }],
     success: [{ en: 'S1 lists F0/1 in VLAN 10 and F0/2 in VLAN 20; G0/1 is a trunk allowing both VLANs; PC-A reaches PC-B through R1.', zh: 'S1 显示 F0/1 属于 VLAN 10、F0/2 属于 VLAN 20；G0/1 是允许两个 VLAN 的 Trunk；PC-A 能经 R1 访问 PC-B。' }],

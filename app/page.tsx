@@ -232,8 +232,19 @@ function LearningSpace() {
                     <p>{track === 'network'
                       ? <B en="Follow a packet from an office laptop to its destination. Learn what to check at each hop." zh="跟随一个数据包从办公电脑走到目的地，逐站学习该检查什么。"/>
                       : <B en="Follow a service from its running process to a working response. Learn how to tell where it stopped." zh="从进程启动一路跟到服务响应，学会判断问题发生在哪一步。"/>}</p>
-                    <a className="atlas-browse" href="#catalog-title"><BookOpen size={16} aria-hidden="true"/><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={16} aria-hidden="true"/></a>
-                    <a className="atlas-questions" href="#work-questions"><span lang="en">Find a work question</span><span lang="zh-CN">按问题选课</span></a>
+                    <div className="study-next launch-lesson">
+                      <button className="primary-button" onClick={() => openLesson(resumeLesson ?? trackLessons[0])}>
+                        <BookOpen aria-hidden="true" size={18}/>
+                        <B en={resumeLesson ? (progress.lastOpened[track] ? 'Continue learning' : 'Start learning') : 'Review lessons'}
+                          zh={resumeLesson ? (progress.lastOpened[track] ? '继续学习' : '开始学习') : '复习课程'}/>
+                        <ArrowRight aria-hidden="true" size={16}/>
+                      </button>
+                      <span className="launch-topic"><B en={resumeLesson?.en ?? trackLessons[0].en} zh={resumeLesson?.title ?? trackLessons[0].title}/></span>
+                    </div>
+                    <div className="atlas-shortcuts">
+                      <a className="atlas-browse" href="#catalog-title"><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={14} aria-hidden="true"/></a>
+                      <a className="atlas-questions" href="#work-questions"><span lang="en">Work questions</span><span lang="zh-CN">按问题选课</span><ArrowRight size={14} aria-hidden="true"/></a>
+                    </div>
                   </div>
                   <DeviceInspector key={track} track={track}/>
                   <div className="study-progress">
@@ -243,27 +254,10 @@ function LearningSpace() {
                     <p><B en="Saved in this browser" zh="进度保存在当前浏览器" /></p>
                   </div>
                 </header>
-                <section className="study-dashboard" aria-label="Study workbench / 学习工作台">
-                  <div className="study-next">
-                    <div className="study-icon"><BookOpen size={24} aria-hidden="true" /></div>
-                    <div>
-                      <p className="study-label"><B en={doneCount || progress.lastOpened[track] ? 'Continue learning' : 'Start here'} zh={doneCount || progress.lastOpened[track] ? '继续学习' : '从这里开始'} /></p>
-                      <h2><B en={resumeLesson?.en ?? 'All lessons completed'} zh={resumeLesson?.title ?? '已完成全部课程'} /></h2>
-                    </div>
-                    <button className="primary-button" onClick={() => openLesson(resumeLesson ?? trackLessons[0])}>
-                      {resumeLesson ? <B en="Open lesson" zh="打开课程" /> : <B en="Review from the start" zh="从头复习" />}<ArrowRight aria-hidden="true" size={16}/>
-                    </button>
-                  </div>
-                  <PathDiagram key={track} track={track} />
-                </section>
               </TabsContent>
             </Tabs>
-            {track === 'network' && <div className="study-lab">
-              <FlaskConical size={21} aria-hidden="true" />
-              <div><strong><B en="Packet Tracer lab files" zh="Packet Tracer 实验文件" /></strong>
-                <p><B en="Three guided labs with screenshots and downloadable .pkt files." zh="三套引导实验，包含截图和可下载的 .pkt 文件。" /></p></div>
-              <button className="study-button" onClick={() => openPacketLab(packetTracerLabs[0].id)}><B en="Open guided labs" zh="打开引导实验" /></button>
-            </div>}
+            <div className="practice-grid">
+            <PathDiagram key={track} track={track}/>
             <section className="field-index" aria-labelledby="work-questions">
               <h2 id="work-questions"><B en="Troubleshoot by question" zh="从工作中的问题开始"/></h2>
               <div className="field-links">{workTopics.map(({id, Icon}) => {
@@ -275,6 +269,13 @@ function LearningSpace() {
                 </button>;
               })}</div>
             </section>
+            </div>
+            {track === 'network' && <div className="study-lab">
+              <FlaskConical size={21} aria-hidden="true" />
+              <div><strong><B en="Packet Tracer lab files" zh="Packet Tracer 实验文件" /></strong>
+                <p><B en="Three guided labs with screenshots and downloadable .pkt files." zh="三套引导实验，包含截图和可下载的 .pkt 文件。" /></p></div>
+              <button className="study-button" onClick={() => openPacketLab(packetTracerLabs[0].id)}><B en="Open guided labs" zh="打开引导实验" /></button>
+            </div>}
             <section className="course-catalog" aria-labelledby="catalog-title">
               <div className="catalog-heading">
                 <h2 id="catalog-title"><B en="Course catalog" zh="课程目录" /></h2>
@@ -291,7 +292,15 @@ function LearningSpace() {
                 <label className="catalog-filter"><input type="checkbox" checked={unfinished} onChange={event => setUnfinished(event.target.checked)} /><B en="Unfinished only" zh="只看未完成" /></label>
               </div>
               {!terms.length && visibleStages.length > 1 && <nav className="stage-jumps" aria-label="Jump to stage / 跳到学习阶段">
-                {visibleStages.map(stage => <a key={stage.key} href={`#stage-${stage.key}`}><B en={stageNames[stage.key]} zh={stage.name}/><span aria-hidden="true">↘</span></a>)}
+                {visibleStages.map(stage => {
+                  const scope = trackLessons.filter(lesson => lesson.stage === stage.key);
+                  const completed = scope.filter(lesson => progress.completed.includes(lesson.id)).length;
+                  return <a key={stage.key} href={`#stage-${stage.key}`}>
+                    <span className="stage-link-title"><B en={stageNames[stage.key]} zh={stage.name}/><ArrowRight size={15} aria-hidden="true"/></span>
+                    <span className="stage-completion">{completed} / {scope.length} <span>done · 已完成</span></span>
+                    <span className="stage-segments" aria-hidden="true">{scope.map(lesson => <i key={lesson.id} data-complete={progress.completed.includes(lesson.id)}/>)}</span>
+                  </a>;
+                })}
               </nav>}
               {results.length ? visibleStages.map(stage => <section key={stage.key} id={`stage-${stage.key}`} className="catalog-stage">
                 <div className="catalog-stage-heading">
@@ -423,7 +432,7 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
   </article></div>
  </Tabs>;
 }
-function Compare(){return <article className="reader"><p className="overline">TWO ROLES, ONE FOUNDATION</p><h1><B en="Two roles, one shared foundation." zh="两种方向，一套共同基础。"/></h1><p className="reader-summary"><B en="Network engineers make connectivity reliable. Systems engineers make compute, identity and services reliable. Responsibilities vary by company and team." zh="Network Engineer 让连接可靠；System Engineer 让计算、身份与服务可靠。具体职责会随公司与团队而变化。"/></p><div className="compare-grid"><section><Network/><h2><B en="Network Engineer" zh="网络工程师"/></h2><p><B en="Focus on how data reaches its destination." zh="关注数据如何抵达目标。"/></p><ul><li><B en="Switching, routing, wireless and WANs" zh="交换、路由、无线与广域网"/></li><li><B en="Network segmentation, perimeter security and VPNs" zh="网络分段、边界安全、VPN"/></li><li><B en="Troubleshooting packet loss, latency, routing and links" zh="丢包、延迟、路由与链路排障"/></li><li><B en="Network automation and architecture" zh="网络自动化与架构设计"/></li></ul></section><section><Server/><h2><B en="System Engineer" zh="系统工程师"/></h2><p><B en="Focus on how services keep running." zh="关注服务如何持续运行。"/></p><ul><li><B en="Windows / Linux and patch management" zh="Windows / Linux 与补丁管理"/></li><li><B en="AD, permissions, virtualization and storage" zh="AD、权限、虚拟化与存储"/></li><li><B en="Backup, monitoring, high availability and disaster recovery" zh="备份、监控、高可用与灾难恢复"/></li><li><B en="Scripting, configuration management and infrastructure as code" zh="脚本、配置管理与基础设施即代码"/></li></ul></section></div><div className="objective"><span><B en="Shared foundations" zh="共同基础"/></span><p><B en="TCP/IP, DNS, DHCP, security fundamentals, log analysis, scripting, change management and layered troubleshooting. Start with networking fundamentals before choosing a primary track." zh="TCP/IP、DNS、DHCP、基础安全、日志分析、脚本、变更管理与分层排障。建议先学完网络基础，再选择主要方向。"/></p></div><h2><B en="How do both roles investigate an inaccessible website?" zh="遇到“网站打不开”，如何协作？"/></h2><p className="body-copy"><B en="The network team checks routes, links, firewalls and port connectivity. The systems team checks DNS records, service listeners, certificates, application logs and resources. Both use a shared timeline and packet-capture evidence instead of drawing conclusions from ping alone." zh="网络侧检查路由、链路、防火墙与端口连通性；系统侧检查 DNS 记录、服务监听、证书、应用日志与资源。两边用同一时间线和抓包证据定位故障，避免只凭 ping 结果下结论。"/></p></article>}
+function Compare(){return <article className="reader"><h1><B en="Two roles, one shared foundation." zh="两种方向，一套共同基础。"/></h1><p className="reader-summary"><B en="Network engineers make connectivity reliable. Systems engineers make compute, identity and services reliable. Responsibilities vary by company and team." zh="Network Engineer 让连接可靠；System Engineer 让计算、身份与服务可靠。具体职责会随公司与团队而变化。"/></p><div className="compare-grid"><section><div className="role-hardware"><HardwareBackdrop track="network"/></div><Network/><h2><B en="Network Engineer" zh="网络工程师"/></h2><p><B en="Focus on how data reaches its destination." zh="关注数据如何抵达目标。"/></p><ul><li><B en="Switching, routing, wireless and WANs" zh="交换、路由、无线与广域网"/></li><li><B en="Network segmentation, perimeter security and VPNs" zh="网络分段、边界安全、VPN"/></li><li><B en="Troubleshooting packet loss, latency, routing and links" zh="丢包、延迟、路由与链路排障"/></li><li><B en="Network automation and architecture" zh="网络自动化与架构设计"/></li></ul></section><section><div className="role-hardware"><HardwareBackdrop track="system"/></div><Server/><h2><B en="System Engineer" zh="系统工程师"/></h2><p><B en="Focus on how services keep running." zh="关注服务如何持续运行。"/></p><ul><li><B en="Windows / Linux and patch management" zh="Windows / Linux 与补丁管理"/></li><li><B en="AD, permissions, virtualization and storage" zh="AD、权限、虚拟化与存储"/></li><li><B en="Backup, monitoring, high availability and disaster recovery" zh="备份、监控、高可用与灾难恢复"/></li><li><B en="Scripting, configuration management and infrastructure as code" zh="脚本、配置管理与基础设施即代码"/></li></ul></section></div><div className="objective"><span><B en="Shared foundations" zh="共同基础"/></span><p><B en="TCP/IP, DNS, DHCP, security fundamentals, log analysis, scripting, change management and layered troubleshooting. Start with networking fundamentals before choosing a primary track." zh="TCP/IP、DNS、DHCP、基础安全、日志分析、脚本、变更管理与分层排障。建议先学完网络基础，再选择主要方向。"/></p></div><h2><B en="How do both roles investigate an inaccessible website?" zh="遇到“网站打不开”，如何协作？"/></h2><p className="body-copy"><B en="The network team checks routes, links, firewalls and port connectivity. The systems team checks DNS records, service listeners, certificates, application logs and resources. Both use a shared timeline and packet-capture evidence instead of drawing conclusions from ping alone." zh="网络侧检查路由、链路、防火墙与端口连通性；系统侧检查 DNS 记录、服务监听、证书、应用日志与资源。两边用同一时间线和抓包证据定位故障，避免只凭 ping 结果下结论。"/></p></article>}
 function Resources() {
   const curated = Object.values(resources);
   const readings = Array.from(new Map(lessons.map(lesson => [lesson.source.url, lesson.source])).values())

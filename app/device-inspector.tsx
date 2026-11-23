@@ -53,10 +53,13 @@ export function DeviceInspector({ track }: { track: keyof typeof devices }) {
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
   return <figure className="device-inspector" aria-label={device.title}>
+    <header className="inspector-head">
+    <strong>{device.title}</strong>
     <div className="inspector-modes" role="group" aria-label="Device view / 设备视图">
       <button type="button" aria-pressed={cutaway} onClick={() => setView('cutaway')}><Layers3 size={13} aria-hidden="true"/>Cutaway / 结构</button>
       <button type="button" aria-pressed={!cutaway} onClick={() => setView('bench')}><Box size={13} aria-hidden="true"/>Bench / 台面</button>
     </div>
+    </header>
     <div className="inspector-scene" key={view}>
       <img className="inspector-image" src={`${base}/hardware/${track}-${view}.jpg`} alt={device.title} width={1200} height={800} fetchPriority="high" />
       {cutaway && showTrace && <SignalTrace points={device.route}/>}

@@ -34,7 +34,7 @@ export function PathDiagram({track}: {track: keyof typeof diagrams}) {
             : <span className="system-drawing"><Icon aria-hidden="true" size={26} strokeWidth={1.5}/></span>}
           <span lang="en">{label}</span><small>{zh}</small>
         </button>
-        {index < diagram.stops.length - 1 && <span className="signal-wire" aria-hidden="true"><ArrowRight size={14}/></span>}
+        {index < diagram.stops.length - 1 && <span className="signal-wire" data-traversed={index < selected} aria-hidden="true"><ArrowRight size={14}/></span>}
       </div>)}
     </div>
     <div className="signal-reading" aria-live="polite">

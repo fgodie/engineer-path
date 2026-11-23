@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-static';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, BookOpen, Cable, Clock, HardDrive, Radio, Check, ChevronLeft, Circle, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -206,12 +206,7 @@ function LearningSpace() {
       </SidebarContent>
     </Sidebar>
     <main className="main" data-surface={selected ? 'lesson' : view} data-theme-track={selected?.track ?? (view === 'packet' ? 'network' : track)}>
-      <header className="topbar">
-        <div><SidebarTrigger aria-label="Toggle navigation / 展开或收起导航" /><b><B en={views[view].en} zh={views[view].zh} /></b></div>
-        <span className="language">EN + 中文</span>
-      </header>
-      <div className="workspace">
-        {selected ? <LessonView key={selected.id} lesson={selected} parentLesson={reviewTrail.at(-1)}
+      {selected ? <LessonView view={view} key={selected.id} lesson={selected} parentLesson={reviewTrail.at(-1)}
           onBack={() => {
             const parent = reviewTrail.at(-1);
             if (parent) openLesson(parent, reviewTrail.slice(0, -1));
@@ -219,7 +214,10 @@ function LearningSpace() {
           }} backToPacket={view === 'packet'} onPacketTracer={openPacketLab}
           onOpenLesson={lesson => openLesson(lesson, [...reviewTrail, selected])} completed={progress.completed.includes(selected.id)} onToggleCompleted={toggleCompleted}
           onNext={nextLesson ? () => openLesson(nextLesson) : undefined} />
-          : view === 'courses' ? <>
+          : <>
+            <Topbar view={view}/>
+            <div className="workspace">
+            {view === 'courses' ? <>
             <Tabs value={track} onValueChange={value => chooseTrack(value as Track)}>
               <TabsList id="track-selector" className="track-tabs">
                 {(Object.keys(tracks) as Track[]).map(id => {
@@ -321,12 +319,26 @@ function LearningSpace() {
           </> : view === 'packet' ? <PacketTracerGuide key={packetLabId ?? 'default'} initialLabId={packetLabId}
             onOpenLesson={id => { const lesson = lessons.find(item => item.id === id); if (lesson) openLesson(lesson); }} />
             : view === 'compare' ? <Compare /> : <Resources />}
-      </div>
+            </div>
+          </>}
       <footer className="page-footer"><span>ENGINEER PATH</span></footer>
     </main>
   </>;
 }
-function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacket, onNext, onPacketTracer, completed, onToggleCompleted }: {
+function Topbar({ view, children, headerRef }: {
+  view: View;
+  children?: React.ReactNode;
+  headerRef?: React.Ref<HTMLElement>;
+}) {
+  return <header ref={headerRef} className={children ? 'topbar lesson-topbar' : 'topbar'}>
+    <div className="topbar-location"><SidebarTrigger aria-label="Toggle navigation / 展开或收起导航"/><b><B en={views[view].en} zh={views[view].zh}/></b></div>
+    {children}
+    <span className="language">EN + 中文</span>
+  </header>;
+}
+
+function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backToPacket, onNext, onPacketTracer, completed, onToggleCompleted }: {
+  view: View;
   lesson: Lesson;
   parentLesson?: Lesson;
   onOpenLesson: (lesson: Lesson) => void;
@@ -342,15 +354,31 @@ function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacke
  const example=fieldCases[l.id];
  const review=lessons.find(item => item.id === example.review);
  const packetLab=packetTracerLabForLesson(l.id === 'n13' ? 'n01' : l.id);
- return <article className="reader">
+ const headerRef = useRef<HTMLElement>(null);
+ const panelsRef = useRef<HTMLDivElement>(null);
+
+ function revealSection() {
+   requestAnimationFrame(() => {
+     const header = headerRef.current;
+     const panels = panelsRef.current;
+     if (!header || !panels) return;
+     const top = window.scrollY + panels.getBoundingClientRect().top - header.offsetHeight - 12;
+     window.scrollTo({ top, behavior: 'instant' });
+   });
+ }
+
+ return <Tabs className="lesson-layout" defaultValue="read" onValueChange={revealSection}>
+  <Topbar view={view} headerRef={headerRef}>
+    <TabsList className="lesson-nav" aria-label="Lesson sections / 课程栏目">
+      <TabsTrigger value="read"><B en="Concepts" zh="知识讲解"/></TabsTrigger>
+      <TabsTrigger value="lab"><B en="Hands-on lab" zh="动手实验"/></TabsTrigger>
+      <TabsTrigger value="quiz"><B en="Knowledge check" zh="课后自测"/></TabsTrigger>
+    </TabsList>
+  </Topbar>
+  <div className="workspace"><article className="reader">
   <button className="back" onClick={onBack}><ChevronLeft size={16}/><B en={parentLesson ? 'Return to '+parentLesson.en : backToPacket ? 'Back to Packet Tracer labs' : 'Back to learning path'} zh={parentLesson ? '返回原课 · '+parentLesson.title : backToPacket ? '返回 Packet Tracer 实验' : '返回学习路径'}/></button>
   <div className="reader-cover"><HardwareBackdrop track={l.track}/><p className="reader-domain">{l.track === 'network' ? <Network size={17} aria-hidden="true"/> : <Server size={17} aria-hidden="true"/>}<span>{l.id.toUpperCase()}</span><B en={stageNames[l.stage]} zh={stages.find(stage => stage.key === l.stage)?.name ?? l.stage}/></p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
-  <Tabs defaultValue="read">
-   <TabsList className="reader-tabs">
-    <TabsTrigger value="read"><B en="Concepts" zh="知识讲解"/></TabsTrigger>
-    <TabsTrigger value="lab"><B en="Hands-on lab" zh="动手实验"/></TabsTrigger>
-    <TabsTrigger value="quiz"><B en="Knowledge check" zh="课后自测"/></TabsTrigger>
-   </TabsList>
+  <div ref={panelsRef} className="lesson-panels">
    <TabsContent value="read">
     <section className="field-case">
       <p className="case-label"><FlaskConical size={16} aria-hidden="true" /><B en="Worked example" zh="先看一个例子"/></p>
@@ -384,7 +412,7 @@ function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacke
     <div className="options">{l.quiz.options.map((option,i)=><button key={option} aria-pressed={answer===i} className={answer===i?'selected':''} onClick={()=>setAnswer(i)}>{answer===i?<Check size={18}/>:<Circle size={18}/>}<B en={e.quiz.options[i]} zh={option}/></button>)}</div>
     {answer!==null&&<div aria-live="polite" className={`feedback ${answer===l.quiz.correct?'correct':''}`}><b><B en={answer===l.quiz.correct?'Correct':'Try again'} zh={answer===l.quiz.correct?'回答正确':'再想一想'}/></b><p><B en={e.quiz.explanation} zh={l.quiz.explanation}/></p></div>}
    </section></TabsContent>
-  </Tabs>
+  </div>
   <div className="reader-end study-actions">
     <button type="button" className="study-button" aria-pressed={completed} onClick={onToggleCompleted}>
       <Check size={17} aria-hidden="true" />
@@ -392,7 +420,8 @@ function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacke
     </button>
     {onNext && <button className="primary-button" onClick={onNext}><B en="Next lesson" zh="下一课"/></button>}
   </div>
- </article>
+  </article></div>
+ </Tabs>;
 }
 function Compare(){return <article className="reader"><p className="overline">TWO ROLES, ONE FOUNDATION</p><h1><B en="Two roles, one shared foundation." zh="两种方向，一套共同基础。"/></h1><p className="reader-summary"><B en="Network engineers make connectivity reliable. Systems engineers make compute, identity and services reliable. Responsibilities vary by company and team." zh="Network Engineer 让连接可靠；System Engineer 让计算、身份与服务可靠。具体职责会随公司与团队而变化。"/></p><div className="compare-grid"><section><Network/><h2><B en="Network Engineer" zh="网络工程师"/></h2><p><B en="Focus on how data reaches its destination." zh="关注数据如何抵达目标。"/></p><ul><li><B en="Switching, routing, wireless and WANs" zh="交换、路由、无线与广域网"/></li><li><B en="Network segmentation, perimeter security and VPNs" zh="网络分段、边界安全、VPN"/></li><li><B en="Troubleshooting packet loss, latency, routing and links" zh="丢包、延迟、路由与链路排障"/></li><li><B en="Network automation and architecture" zh="网络自动化与架构设计"/></li></ul></section><section><Server/><h2><B en="System Engineer" zh="系统工程师"/></h2><p><B en="Focus on how services keep running." zh="关注服务如何持续运行。"/></p><ul><li><B en="Windows / Linux and patch management" zh="Windows / Linux 与补丁管理"/></li><li><B en="AD, permissions, virtualization and storage" zh="AD、权限、虚拟化与存储"/></li><li><B en="Backup, monitoring, high availability and disaster recovery" zh="备份、监控、高可用与灾难恢复"/></li><li><B en="Scripting, configuration management and infrastructure as code" zh="脚本、配置管理与基础设施即代码"/></li></ul></section></div><div className="objective"><span><B en="Shared foundations" zh="共同基础"/></span><p><B en="TCP/IP, DNS, DHCP, security fundamentals, log analysis, scripting, change management and layered troubleshooting. Start with networking fundamentals before choosing a primary track." zh="TCP/IP、DNS、DHCP、基础安全、日志分析、脚本、变更管理与分层排障。建议先学完网络基础，再选择主要方向。"/></p></div><h2><B en="How do both roles investigate an inaccessible website?" zh="遇到“网站打不开”，如何协作？"/></h2><p className="body-copy"><B en="The network team checks routes, links, firewalls and port connectivity. The systems team checks DNS records, service listeners, certificates, application logs and resources. Both use a shared timeline and packet-capture evidence instead of drawing conclusions from ping alone." zh="网络侧检查路由、链路、防火墙与端口连通性；系统侧检查 DNS 记录、服务监听、证书、应用日志与资源。两边用同一时间线和抓包证据定位故障，避免只凭 ping 结果下结论。"/></p></article>}
 function Resources() {

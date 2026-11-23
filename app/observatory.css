@@ -1,0 +1,133 @@
+/* Full-width engineering atlas. The course data and interactive diagrams are shared. */
+.observatory {
+  min-height:100vh; background:#080c13; color:#eaf4f7;
+  --edge:#33424a; --quiet:#a8bcc4;
+}
+.global-header {
+  display:flex; align-items:center; justify-content:space-between; gap:2rem;
+  padding:.85rem max(4vw,calc((100vw - 86rem)/2)); border-bottom:1px solid var(--edge);
+  background:#0d131b;
+}
+.wordmark {display:flex; align-items:center; gap:.55rem; font:700 2rem/1 var(--night-display); letter-spacing:-.02em; white-space:nowrap;}
+.wordmark svg {width:2.3rem;height:2.3rem; padding:.42rem; color:#092322; background:#8cf6dc; border-radius:50%;}
+.global-sections {display:flex;gap:.5rem;}
+.destination {display:flex;align-items:center;gap:.55rem;padding:.45rem .9rem;color:#c6d0da;border-bottom:2px solid transparent;text-align:left;}
+.destination svg {width:17px;}
+.destination .bi-en {font-weight:570;font-size:.85rem;}
+.destination .bi-zh {color:#aab8c3;font-size:.72rem;}
+.destination:hover,.destination[aria-current=page] {color:#96fee5;background:#142329;border-color:#82efda;}
+.observatory button:focus-visible,.observatory a:focus-visible {outline:2px dashed currentColor;outline-offset:2px;}
+.observatory .main {margin:0;width:100%;background:radial-gradient(ellipse at 95% 5%,#20202f,transparent 46rem),#090f16;}
+.observatory .workspace {max-width:90rem;padding:clamp(.9rem,3vw,2.4rem);}
+.observatory .track-studio {gap:0;position:relative;}
+.observatory .track-studio #track-selector {width:fit-content!important;max-width:100%;margin:0!important;gap:0!important;}
+.observatory .track-studio #track-selector [role=tab] {min-height:46px;padding:.45rem 1.1rem!important;border:0!important;border-radius:0!important;background:#17232d!important;box-shadow:none!important;}
+.observatory .track-studio #track-selector [aria-selected=true] {background:var(--direction-ink)!important;color:#0b1720!important;}
+.observatory #track-selector [aria-selected=true] :is(.bi-zh,svg) {color:#0b1720!important;}
+.observatory #track-selector .direction-check {background:none;}
+.observatory .atlas-cover.night-cover {display:grid;grid-template-columns:1fr 1fr;background:#101920;border-radius:0;border:1px solid #3a4e58;box-shadow:none;}
+.observatory .atlas-cover.night-cover::before,.observatory .atlas-cover.night-cover::after {display:none;}
+.observatory .atlas-title {grid-column:1;grid-row:1;width:auto;padding:clamp(1.5rem,3.4vw,3.4rem);}
+.observatory .atlas-title h1 {font-size:clamp(3.4rem,6.9vw,6.9rem);}
+.observatory .atlas-title h1 .bi-en {text-shadow:none;letter-spacing:-.018em;}
+.observatory .atlas-title p {max-width:52ch;}
+.cover-art {isolation:isolate;position:relative;overflow:hidden;grid-column:2;grid-row:1;background:#121e29;display:grid;place-items:center;}
+.observatory .cover-art .night-backdrop {inset:0;width:100%;height:100%;object-position:center;opacity:.22;filter:saturate(.8);}
+.equipment-window {position:absolute;inset:0;background:radial-gradient(ellipse at center,#589caf23,transparent 75%);}
+.observatory .equipment-window .hardware-backdrop {width:100%;height:100%;inset:0;object-fit:contain;opacity:1;mix-blend-mode:screen;mask-image:linear-gradient(to bottom,transparent,#000 12%,#000 83%,transparent);}
+.equipment-caption {z-index:1;align-self:end;justify-self:start;margin:1.2rem;font:500 .75rem/1.6 var(--font-geist-mono),monospace;letter-spacing:.05em;color:#d5eef1;background:#0a131dd9;padding:.35rem .65rem;border-left:2px solid var(--bench-accent);}
+.observatory .study-progress {grid-row:2;grid-column:1/-1;background:#14232a;}
+.observatory .course-catalog {margin-block:2rem;padding-top:1rem;}
+.observatory .catalog-heading h2 .bi-en,.observatory .reader > h2 .bi-en {font:700 clamp(2rem,4vw,3.7rem)/1 var(--night-display);text-transform:uppercase;}
+.observatory .catalog-controls {align-items:center;}
+.observatory .catalog-stage {display:grid;grid-template-columns:minmax(12rem,1fr) 3fr;gap:2rem;border-top:1px solid var(--edge);padding-top:1.1rem;}
+.observatory .catalog-stage-heading {display:block;border:0;padding:.4rem 0;}
+.observatory .catalog-stage-heading::before {display:none;}
+.observatory .lesson-grid {display:grid;grid-template-columns:1fr 1fr;gap:0 .8rem;align-content:start;}
+.observatory .catalog-card {display:grid;grid-template-columns:3.3rem 1fr;gap:.4rem;align-items:center;border:0;border-bottom:1px solid var(--edge);border-radius:0;padding:.85rem .5rem;background:#101923;}
+.observatory .catalog-card::after {display:none;}
+.observatory .catalog-card .catalog-card-meta {grid-row:1/3;display:grid;justify-items:center;gap:.3rem;margin:0;}
+.observatory .catalog-card h4,.observatory .catalog-card footer {margin:0;}
+.observatory .catalog-card footer {grid-column:2;border:0;padding:0;justify-content:start;}
+.observatory .inspection-bay {margin-block:2rem;}
+.observatory .main .reader,.observatory .main .pt-guide {max-width:none;}
+.observatory .main .reader:not(.role-comparison,.reference-library) {border:0;background:transparent;padding:0;}
+.observatory .lesson-topbar {grid-template-columns:1fr auto 1fr;background:#101922;}
+.observatory .reader .reader-cover {border-radius:0;padding:clamp(1.2rem,3vw,3rem);border-left-width:5px;}
+.reading-spread:not([hidden]):not([inert]) {display:grid;grid-template-columns:minmax(12rem,1fr) minmax(0,3.5fr);gap:2rem;}
+.chapter-index {align-self:start;position:sticky;top:5rem;padding:1rem;border-block:1px solid var(--edge);}
+.chapter-index strong,.chapter-index a {display:block;padding:.65rem .3rem;}
+.chapter-index a {border-top:1px solid #30404b;color:#e5eff3;font-size:.9rem;}
+.chapter-index strong {color:var(--bench-accent);}
+.chapter-index .bi-zh {color:var(--quiet);}
+.chapter-text {min-width:0;}
+.chapter-text .lesson-section {scroll-margin-top:6rem;}
+.lab-workspace {display:grid;grid-template-columns:minmax(12rem,1fr) minmax(0,3fr);gap:1.2rem;margin-top:1rem;}
+.observatory .pt-lab-picker {display:grid;grid-template-columns:1fr;align-self:start;position:sticky;top:1rem;margin:0;}
+.observatory .pt-guide .pt-panel {margin:0;border-radius:0;}
+.observatory .role-comparison {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:1.5rem;}
+.observatory .role-comparison .compare-grid {margin:0;}
+.observatory .role-comparison .section-cover {align-self:stretch;}
+.observatory .role-comparison > :is(.objective,h2,.body-copy) {grid-column:1/-1;margin:0;}
+.observatory .role-comparison .section-cover h1 .bi-en {font-size:clamp(2.5rem,4.5vw,5rem);}
+.observatory .section-cover {border-radius:0;}
+.library-search {display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;margin:1.5rem 0;border:1px solid #4b656f;border-left:3px solid var(--bench-accent);background:#15212d;}
+.library-search input {flex:1;min-width:0;background:transparent;color:#effaff;}
+.observatory .reference-library .reference-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+.observatory .reference-library .reference-card {background:#111c26;border:0;border-top:1px solid #46606d;border-radius:0;}
+@media (max-width:850px) {
+ .global-header {display:grid;gap:.6rem;padding:.8rem 1rem .2rem;}
+ .global-sections {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.2rem;}
+ .destination {justify-content:center;padding:.45rem .25rem;}
+ .global-header .wordmark {justify-self:start;font-size:1.65rem;}
+ .observatory .role-comparison,.reading-spread:not([hidden]):not([inert]),.lab-workspace {grid-template-columns:minmax(0,1fr);}
+ .chapter-index,.observatory .pt-lab-picker {position:static;}
+ .chapter-index {display:flex;flex-wrap:wrap;gap:.6rem;}
+ .chapter-index a {border:0;font-size:.8rem;}
+ .observatory .pt-lab-picker {grid-template-columns:repeat(3,minmax(0,1fr));}
+ .observatory .catalog-stage {grid-template-columns:1fr;gap:.5rem;}
+ .observatory .lesson-topbar {grid-template-columns:1fr;}
+ .observatory .lesson-topbar :is(.topbar-location,.language) {display:none;}
+}
+@media (max-width:620px) {
+ .global-header {padding-inline:.55rem;}
+ .global-sections {width:100%;}
+ .destination {text-align:center;min-height:50px;line-height:1.3;}
+ .destination svg {display:none;}
+ .destination .bi-en {font-size:.73rem;}
+ .destination .bi-zh {font-size:.68rem;}
+ .observatory .track-studio #track-selector {width:100%!important;}
+ .observatory .atlas-cover.night-cover {grid-template-columns:1fr;}
+ .cover-art {grid-column:1;grid-row:1;height:clamp(8rem,34vw,12rem);}
+ .equipment-caption {margin:.45rem;font-size:.62rem;}
+ .observatory .atlas-title {grid-row:2;padding:1.1rem;}
+ .observatory .atlas-title h1 {font-size:clamp(2.8rem,11vw,4rem);}
+ .observatory .study-progress {grid-row:3;}
+ .observatory .reference-library .reference-grid,.observatory .lesson-grid {grid-template-columns:minmax(0,1fr);}
+ .observatory .pt-lab-picker {position:static;grid-template-columns:1fr;}
+ .observatory .pt-lab-picker button {display:grid;grid-template-columns:2.7rem 1fr auto;gap:.6rem;align-items:center;}
+ .observatory .pt-lab-picker-top {display:grid;margin:0;}
+ .observatory .pt-lab-picker button small {margin:0;}
+}
+.compact-destination {display:none;}
+.cover-art {align-self:stretch;border-inline-start:1px solid #3a4e58;}
+.cover-art::after {content:'';position:absolute;inset:7%;border:1px solid #8debdc44;pointer-events:none;clip-path:polygon(0 0,8% 0,8% 1%,1% 1%,1% 8%,0 8%,0 0,100% 0,100% 8%,99% 8%,99% 1%,92% 1%,92% 0,100% 0,100% 100%,92% 100%,92% 99%,99% 99%,99% 92%,100% 92%,100% 100%,0 100%,0 92%,1% 92%,1% 99%,8% 99%,8% 100%,0 100%);}
+.equipment-caption {display:inline-flex;align-items:center;gap:.8rem;color:#ddfffa;}
+.cover-art:hover .equipment-caption {background:#183039;color:white;}
+@media(min-width:851px) {
+ .observatory .lab-workspace {grid-template-columns:minmax(13rem,1fr) minmax(0,3.6fr);}
+ .observatory .pt-intro.section-cover {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:.8rem 3rem;align-items:start;}
+ .pt-intro.section-cover .overline {grid-column:1/-1;}
+ .observatory .pt-intro.section-cover h1 {grid-row:2/4;margin:0;}
+ .observatory .pt-intro.section-cover > p:not(.overline),.observatory .pt-intro.section-cover > small {max-width:none;}
+ .pt-intro.section-cover .pt-official {grid-column:2;justify-self:start;}
+ .pt-intro.section-cover small {grid-column:1/-1;}
+ .observatory .pt-intro.section-cover::before {background:linear-gradient(100deg,#0b1526f5,#0b1426db 65%,#0b1426ba);}
+}
+@media(max-width:620px) {
+ .full-destination {display:none;}
+ .compact-destination {display:block;}
+ .destination {gap:.3rem;}
+ .destination svg {display:block;width:14px;}
+ .cover-art {border:0;}
+}

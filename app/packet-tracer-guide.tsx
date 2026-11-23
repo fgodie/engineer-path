@@ -87,6 +87,7 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
       <small><B value={{ en: 'The screenshots and finished .pkt files were made in Packet Tracer 9.0.1. The page saves checklist progress in this browser only and does not control your Packet Tracer app.', zh: '下方真实截图和完成版 .pkt 文件来自 Packet Tracer 9.0.1。网页只在当前浏览器保存勾选进度，不会控制你的 Packet Tracer 软件。' }} /></small>
     </header>
 
+    <div className="lab-workspace">
     <nav className="pt-lab-picker" aria-label="Packet Tracer labs / Packet Tracer 实验">
       {packetTracerLabs.map((item) => {
         const count = Array.isArray(progress[item.id]) ? progress[item.id].length : 0;
@@ -130,5 +131,6 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
       <div className="pt-challenge"><strong><B value={{ en: 'Explain before you test', zh: '先预测，再动手' }} /></strong><p><B value={lab.challenge} /></p></div>
       <div className="pt-finish"><span>{done.length === lab.steps.length ? <B value={{ en: 'Build complete. Explain the result to confirm you understand it.', zh: '搭建完成。试着解释结果，确认自己真正理解。' }} /> : <B value={{ en: `${done.length} of ${lab.steps.length} steps checked`, zh: `已勾选 ${done.length} / ${lab.steps.length} 个步骤` }} />}</span><button type="button" onClick={() => save({ ...progress, [lab.id]: [] })}><RotateCcw size={15} /><B value={{ en: 'Reset this lab', zh: '重置本实验' }} /></button></div>
     </section>
+    </div>
   </article>;
 }

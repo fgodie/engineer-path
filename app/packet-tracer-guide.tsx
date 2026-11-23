@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowDownToLine, ArrowRight, ArrowUpRight, Check, Circle, Clock3, FlaskConical, RotateCcw } from 'lucide-react';
 import { packetTracerLabs, type Pair } from './packet-tracer-labs';
+import { NightBackdrop } from './night-backdrop';
 import { PacketStepVisual, PacketTopology, SimulationVisual } from './packet-tracer-visuals';
 
 function B({ value }: { value: Pair }) {
@@ -78,7 +79,7 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
   }
 
   return <article className="pt-guide">
-    <header className="pt-intro">
+    <header className="pt-intro section-cover"><NightBackdrop track="network"/>
       <p className="overline">PACKET TRACER / 动手学习</p>
       <h1><B value={{ en: 'See the packet. Build the network.', zh: '看见数据包，亲手搭建网络。' }} /></h1>
       <p><B value={{ en: 'Three guided labs connect the ideas in this site to Cisco Packet Tracer. Build each topology in the desktop app, observe the traffic, then explain the result.', zh: '三个循序渐进的实验，把本站原理讲解与 Cisco Packet Tracer 连接起来。在电脑软件中搭建拓扑、观察流量，再解释结果。' }} /></p>
@@ -97,7 +98,7 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
       })}
     </nav>
 
-    <section className="pt-panel">
+    <section className="pt-panel" key={lab.id}>
       <div className="pt-panel-heading"><div><p className="overline">GUIDED LAB / 引导实验</p><h2><B value={lab.title} /></h2><p><B value={lab.question} /></p></div><span><Clock3 size={15} /> {lab.minutes} MIN</span></div>
       <div className="pt-principle"><strong><B value={{ en: 'Why it works', zh: '背后的原理' }} /></strong><p><B value={lab.principle} /></p><button type="button" onClick={() => onOpenLesson(lab.lessonId)}><B value={{ en: 'Read the related lesson', zh: '阅读对应课程' }} /><ArrowRight size={16} /></button></div>
 

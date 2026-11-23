@@ -705,3 +705,184 @@ body:has(.main[data-theme-track=system]) {
   .night-cover .launch-lesson .primary-button:focus-visible {outline:2px solid Highlight;clip-path:none;}
   .night-cover .atlas-title h1 .bi-en {color:CanvasText;text-shadow:none;}
 }
+
+/* Shared night surfaces for navigation, manuals and reference material. */
+.main {
+  --panel: #101727;
+  --panel-raised: #182236;
+  --panel-rule: #39465e;
+  --ink: #eef4ff;
+  --copy: #ced9e8;
+  --secondary: #acbfd2;
+  --panel-fill: linear-gradient(135deg, #192438, #11182a 75%);
+}
+.main :is(.reader,.pt-guide) {
+  color: var(--ink);
+  background: #0e1422;
+  border-color: var(--panel-rule);
+  border-radius: 3px 16px 5px 5px;
+}
+.main :is(.reference-library,.role-comparison,.pt-guide) {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.main .section-cover {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3.6cqi, 3rem);
+  border: 1px solid #48516b;
+  border-radius: 3px 16px 4px 4px;
+  background: linear-gradient(115deg, #101e30, #21152f);
+  box-shadow: 0 12px 34px #04071455;
+}
+.section-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg,#0c1423fa 4%,#10192aed 44%,#101725a6 72%,#10172538);
+}
+.section-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg,var(--bench-accent),transparent 55%,var(--night-flare));
+}
+.main .section-cover h1 {margin: 0; max-width: 23ch;}
+.main .section-cover h1 .bi-en {
+  font: 700 clamp(2.65rem, 5.2cqi, 5.2rem)/.96 var(--night-display);
+  text-transform: uppercase;
+  letter-spacing: .012em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.main .section-cover h1 .bi-zh {font-size: clamp(1.1rem, 2.1cqi, 1.65rem); color: var(--bench-accent); margin-top: .65rem;}
+.main .library-cover {padding-block: clamp(2rem, 5.5cqi, 4.75rem);}
+.main .role-cover {background: radial-gradient(ellipse at 100% 90%,#462949,transparent 65%), linear-gradient(120deg,#112b38,#131c31 63%);}
+.role-cover::before {background: radial-gradient(#9eb2ed38 1px,transparent 1px); background-size: 14px 14px; mask-image: linear-gradient(90deg,transparent,#000);}
+.role-cover .reader-summary {max-width: 76ch; margin: 1.2rem 0 0;}
+.main .section-cover :is(p,small) .bi-en {color: var(--copy);}
+.main .section-cover :is(p,small) .bi-zh {color: var(--secondary);}
+.pt-guide .section-cover h1 {margin-bottom: 1rem;}
+.pt-intro .night-backdrop {object-position: 74% 45%;}
+.main .pt-intro > :is(p,small) {max-width: min(72ch,76%);}
+.main .pt-intro .pt-official {max-width: 100%;}
+
+.main .compare-grid {gap: 1rem; margin: 1.4rem 0;}
+.main .compare-grid section {--role-color: #62f7ef; background: var(--panel-fill); border-color: var(--panel-rule); border-top: 2px solid var(--role-color);}
+.main .compare-grid section:nth-child(2) {--role-color: #edb0ff;}
+.compare-grid .role-hardware {height: clamp(8rem,16cqi,12.5rem); background:radial-gradient(ellipse,#223349,#0b111e 75%);}
+.main .compare-grid section > svg, .main .compare-grid h2 .bi-zh {color: var(--role-color);}
+.main .compare-grid li::marker {color: var(--role-color);}
+.main .compare-grid :is(p,li) .bi-en, .main .body-copy .bi-en {color: var(--copy);}
+.main .compare-grid :is(p,li) .bi-zh, .main .body-copy .bi-zh {color: var(--secondary);}
+.main .reference-library > h2, .main .role-comparison > h2 {margin-top: 2rem;}
+.main .reader > h2 .bi-zh {color: var(--secondary);}
+.main .reference-library :is(.reference-card,.resource-row), .main .pt-lab-picker button {
+  background: var(--panel-fill);
+  border: 1px solid var(--panel-rule);
+  color: var(--ink);
+  border-radius: 3px 10px 3px 3px;
+  box-shadow: none;
+}
+.main .reference-library .reference-grid {grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));}
+.reference-source {display:flex; align-items:center; gap:.55rem; color:var(--secondary); font: .74rem/1.5 var(--font-geist-mono),monospace; overflow-wrap:anywhere;}
+.reference-source svg {flex:none;}
+.reference-source svg:last-child {margin-inline-start:auto;}
+.main .reference-card h3, .main .reference-card svg, .main .resource-row svg {color: var(--bench-accent);}
+.main .reference-card h3 .bi-zh, .main .resource-row .bi-zh {color: var(--ink);}
+.main .reference-card p, .main .reference-card p .bi-en {color: var(--copy);}
+.main .reference-card p .bi-zh, .main .resource-row small {color: var(--secondary);}
+.main .pt-lab-picker button.active, .main .reader .options button.selected {
+  border-color: var(--bench-accent);
+  background: linear-gradient(110deg,var(--bench-tint),var(--panel));
+  box-shadow: inset 3px 0 var(--bench-accent);
+}
+.main .pt-lab-picker-top {color: var(--bench-accent);}
+.main .pt-lab-picker button :is(.bi-zh,small) {color: var(--secondary);}
+
+.main .pt-panel, .main .reader :is(.field-case,.options button,.resource-link), .main .pt-step-card {
+  background: var(--panel);
+  border-color: var(--panel-rule);
+  color: var(--ink);
+}
+.main .pt-panel {border-top: 2px solid var(--bench-accent);}
+.main .pt-step-card, .main .reader .field-case {background: var(--panel-fill);}
+.main .reader .field-case {border-left-color: var(--bench-accent);}
+.main .reader :is(.objective,.takeaway,.lab-env,.pt-lesson-link),
+.main .pt-guide :is(.pt-principle,.pt-step-expect,.pt-result-grid section,.pt-challenge,.pt-sample-note,.pt-download) {
+  background: var(--panel-raised); border-color: var(--panel-rule); color: var(--copy); border-radius: 5px;
+}
+.main .reader :is(.objective,.takeaway), .main .pt-guide :is(.pt-principle,.pt-step-expect) {border-inline-start: 3px solid var(--bench-accent);}
+.main .pt-result-grid section + section {border-inline-start: 3px solid #f4ba80;}
+.main .pt-guide :is(.pt-panel-heading > span,.pt-step-number) {color:var(--bench-accent); background:var(--bench-tint);}
+.main .pt-guide :is(.pt-table-wrap td,.pt-table-wrap th) {border-color:var(--panel-rule);color:var(--copy);}
+.main .pt-guide .pt-table-wrap th {background:var(--panel-raised);}
+.main .pt-guide :is(.pt-table-wrap caption,.pt-table-wrap th .bi-zh,.pt-config h5,.pt-panel-heading .overline) {color:var(--bench-accent);}
+.main .pt-guide .pt-step-card.done {border-color:#528e92;}
+.main .pt-guide .pt-step-card.done .pt-step-number {background:var(--bench-accent);color:#101525;}
+.main .pt-table-wrap td {background:var(--panel);}
+.main .reader :is(.lesson-section,.reader-end,.field-case details), .main .pt-finish {border-color:var(--panel-rule);}
+.main .reader :is(.lesson-section h2,.field-case h2,.quiz h2,.options button,.pt-lesson-link strong) .bi-en,
+.main .pt-guide :is(.pt-panel h2,.pt-panel h3,.pt-panel h4,.pt-challenge strong) .bi-en {color:var(--ink);}
+.main .reader :is(.objective p,.takeaway p,.field-case p,.lab-steps li,.lesson-section > p,.pt-lesson-link p) .bi-en,
+.main .pt-panel :is(.pt-muted,.pt-panel-heading p,.pt-principle p,.pt-step-expect p,.pt-step-content > p,.pt-list,.pt-result-grid li,.pt-challenge p,.pt-finish > span,.pt-sample-note) .bi-en {color:var(--copy);}
+.main .reader :is(.objective,.takeaway,.field-case,.lab-steps,.lesson-section > p,.lesson-section h2,.pt-lesson-link,.quiz h2,.options button) .bi-zh,
+.main .pt-panel :is(h2,h3,h4,.pt-muted,.pt-panel-heading p,.pt-principle p,.pt-step-expect p,.pt-step-content > p,.pt-list,.pt-result-grid li,.pt-challenge,.pt-finish > span,.pt-sample-note) .bi-zh {color:var(--secondary);}
+.main .reader :is(.objective > span,.takeaway b,.case-label,.case-review,.field-case summary,.resource-link,.quiz .overline),
+.main .pt-panel :is(.pt-principle strong,.pt-step-expect strong,.pt-download,.pt-principle button) {color:var(--bench-accent);}
+.main .reader .objective > span .bi, .main .reader .objective > span .bi > span {color:var(--bench-accent);}
+.main .reader :is(.takeaway b,.case-label,.field-case summary,.case-review,.resource-link) :is(.bi-en,.bi-zh),
+.main .pt-panel :is(.pt-principle strong,.pt-step-expect strong,.pt-download,.pt-principle button) .bi-zh {color:inherit;}
+.main .reader .field-case summary::before {background:var(--bench-tint);}
+.main :is(.pt-topology-figure figcaption,.pt-step-figure figcaption,.pt-simulation-visual > p,.pt-download small),
+.main :is(.pt-topology-figure figcaption,.pt-step-figure figcaption,.pt-simulation-visual > p) .bi-zh {color:var(--secondary);}
+.main .reader :is(.foundation-visual,.lesson-figure) {color:#172c40;}
+.main .reader .feedback {background:#372b24; color:#ffce8f; border-inline-start:3px solid currentColor;}
+.main .reader .feedback.correct {background:#14302e; color:#8ef0d3;}
+.main .reader .quiz .overline .bi-zh, .main .feedback b .bi-zh, .main .pt-table-wrap caption .bi-zh {color:inherit;}
+.main .reader .reference-heading .bi-zh {color:var(--secondary);}
+.main .reader .feedback p :is(.bi-en,.bi-zh) {color:var(--copy);}
+
+.main .reader .primary-button, .main .pt-intro .pt-official {
+  background:var(--bench-accent); color:#0c1721; border:1px solid transparent; border-radius:2px 10px 2px 2px;
+}
+.main .reader .primary-button .bi > :is(.bi-en,.bi-zh) {color:#0c1721;}
+.main .reader :is(.back,.study-button), .main .pt-guide :is(.pt-step-check,.pt-finish button) {
+  background:var(--panel-raised); border:1px solid var(--panel-rule); color:var(--copy); border-radius:4px;
+}
+.main .reader :is(.back,.study-button) .bi-zh, .main .pt-guide :is(.pt-step-check,.pt-finish button) .bi-zh {color:inherit;}
+.main .reader .study-button[aria-pressed=true], .main .pt-guide .pt-step-check[aria-pressed=true] {
+  background:var(--bench-tint); border-color:var(--bench-accent); color:var(--bench-accent);
+}
+.main :is(button,a,summary,input):focus-visible, .nav-item:focus-visible {outline:2px solid var(--bench-accent);outline-offset:3px;}
+@media (hover:hover) {
+  .main :is(.reference-card,.resource-row,.pt-lab-picker button,.stage-jumps a,.catalog-card,.back,.study-button,.pt-step-check,.pt-download,.pt-finish button,.options button):hover {
+    border-color:var(--bench-accent); box-shadow:inset 2px 0 var(--bench-accent); background-color:var(--panel-raised);
+  }
+  .main .reader .primary-button:hover, .main .pt-intro .pt-official:hover {background:#f3ffff;}
+}
+@media (prefers-reduced-motion:no-preference) {
+  .main :is(button,a,summary), .nav-item {
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  }
+  .main :is(.workspace > article,.atlas-cover,.pt-panel,.lesson-panels [role=tabpanel]:not([hidden]),.feedback) {
+    animation: console-enter 230ms cubic-bezier(.2,.65,.3,1);
+  }
+  .main :is(.primary-button,.pt-official,.study-button,.pt-step-check):active {transform:translateY(1px);}
+  @keyframes console-enter {from {opacity:.65; transform:translateY(5px);} to {opacity:1; transform:translateY(0);}}
+  @media (hover:hover) {
+    .main :is(.reference-card,.pt-lab-picker button,.catalog-card):hover {transform:translateY(-2px);}
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .main *, .main *::before, .main *::after, .nav-item {transition-duration:0s!important;animation-duration:0s!important;scroll-behavior:auto!important;}
+}
+@container console (max-width: 40rem) {
+  .main .pt-intro > :is(p,small) {max-width:100%;}
+  .section-cover::before {background:linear-gradient(100deg,#0b1424f5,#101729d9 70%,#131a2d99);}
+  .main .reader:not(.role-comparison,.reference-library) {padding: .85rem;}
+}

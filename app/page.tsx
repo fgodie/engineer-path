@@ -3,13 +3,14 @@
 export const dynamic = 'force-static';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, BookOpen, Cable, Clock, HardDrive, Radio, Check, ChevronLeft, Circle, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, Cable, Clock, HardDrive, Radio, Check, ChevronLeft, Circle, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { lessons as originalLessons, stages, type Lesson } from './lessons';
 import { english as originalEnglish } from './english';
 import { addFoundations, foundationEnglish, resources } from './foundations';
 import { fieldCases } from './field-cases';
+import { NightBackdrop } from './night-backdrop';
 import { DeviceInspector } from './device-inspector';
 import { PathDiagram } from './path-diagram';
 import { LessonFigure } from './lesson-figure';
@@ -21,11 +22,6 @@ import { packetTracerLabForLesson, packetTracerLabs } from './packet-tracer-labs
 
 function B({ en, zh }: { en: string; zh: string }) {
   return <span className="bi"><span lang="en" className="bi-en">{en}</span><span lang="zh-CN" className="bi-zh">{zh}</span></span>;
-}
-
-function NightBackdrop({ track }: { track: 'network' | 'system' }) {
-  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-  return <img className="night-backdrop" src={`${base}/scenes/${track}-night.jpg`} alt="" fetchPriority="high" width={1600} height={900}/>;
 }
 
 function HardwareBackdrop({ track }: { track: 'network' | 'system' }) {
@@ -439,17 +435,17 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
   </article></div>
  </Tabs>;
 }
-function Compare(){return <article className="reader"><h1><B en="Two roles, one shared foundation." zh="两种方向，一套共同基础。"/></h1><p className="reader-summary"><B en="Network engineers make connectivity reliable. Systems engineers make compute, identity and services reliable. Responsibilities vary by company and team." zh="Network Engineer 让连接可靠；System Engineer 让计算、身份与服务可靠。具体职责会随公司与团队而变化。"/></p><div className="compare-grid"><section><div className="role-hardware"><HardwareBackdrop track="network"/></div><Network/><h2><B en="Network Engineer" zh="网络工程师"/></h2><p><B en="Focus on how data reaches its destination." zh="关注数据如何抵达目标。"/></p><ul><li><B en="Switching, routing, wireless and WANs" zh="交换、路由、无线与广域网"/></li><li><B en="Network segmentation, perimeter security and VPNs" zh="网络分段、边界安全、VPN"/></li><li><B en="Troubleshooting packet loss, latency, routing and links" zh="丢包、延迟、路由与链路排障"/></li><li><B en="Network automation and architecture" zh="网络自动化与架构设计"/></li></ul></section><section><div className="role-hardware"><HardwareBackdrop track="system"/></div><Server/><h2><B en="System Engineer" zh="系统工程师"/></h2><p><B en="Focus on how services keep running." zh="关注服务如何持续运行。"/></p><ul><li><B en="Windows / Linux and patch management" zh="Windows / Linux 与补丁管理"/></li><li><B en="AD, permissions, virtualization and storage" zh="AD、权限、虚拟化与存储"/></li><li><B en="Backup, monitoring, high availability and disaster recovery" zh="备份、监控、高可用与灾难恢复"/></li><li><B en="Scripting, configuration management and infrastructure as code" zh="脚本、配置管理与基础设施即代码"/></li></ul></section></div><div className="objective"><span><B en="Shared foundations" zh="共同基础"/></span><p><B en="TCP/IP, DNS, DHCP, security fundamentals, log analysis, scripting, change management and layered troubleshooting. Start with networking fundamentals before choosing a primary track." zh="TCP/IP、DNS、DHCP、基础安全、日志分析、脚本、变更管理与分层排障。建议先学完网络基础，再选择主要方向。"/></p></div><h2><B en="How do both roles investigate an inaccessible website?" zh="遇到“网站打不开”，如何协作？"/></h2><p className="body-copy"><B en="The network team checks routes, links, firewalls and port connectivity. The systems team checks DNS records, service listeners, certificates, application logs and resources. Both use a shared timeline and packet-capture evidence instead of drawing conclusions from ping alone." zh="网络侧检查路由、链路、防火墙与端口连通性；系统侧检查 DNS 记录、服务监听、证书、应用日志与资源。两边用同一时间线和抓包证据定位故障，避免只凭 ping 结果下结论。"/></p></article>}
+function Compare(){return <article className="reader role-comparison"><header className="section-cover role-cover"><h1><B en="Two roles, one shared foundation." zh="两种方向，一套共同基础。"/></h1><p className="reader-summary"><B en="Network engineers make connectivity reliable. Systems engineers make compute, identity and services reliable. Responsibilities vary by company and team." zh="Network Engineer 让连接可靠；System Engineer 让计算、身份与服务可靠。具体职责会随公司与团队而变化。"/></p></header><div className="compare-grid"><section><div className="role-hardware"><HardwareBackdrop track="network"/></div><Network/><h2><B en="Network Engineer" zh="网络工程师"/></h2><p><B en="Focus on how data reaches its destination." zh="关注数据如何抵达目标。"/></p><ul><li><B en="Switching, routing, wireless and WANs" zh="交换、路由、无线与广域网"/></li><li><B en="Network segmentation, perimeter security and VPNs" zh="网络分段、边界安全、VPN"/></li><li><B en="Troubleshooting packet loss, latency, routing and links" zh="丢包、延迟、路由与链路排障"/></li><li><B en="Network automation and architecture" zh="网络自动化与架构设计"/></li></ul></section><section><div className="role-hardware"><HardwareBackdrop track="system"/></div><Server/><h2><B en="System Engineer" zh="系统工程师"/></h2><p><B en="Focus on how services keep running." zh="关注服务如何持续运行。"/></p><ul><li><B en="Windows / Linux and patch management" zh="Windows / Linux 与补丁管理"/></li><li><B en="AD, permissions, virtualization and storage" zh="AD、权限、虚拟化与存储"/></li><li><B en="Backup, monitoring, high availability and disaster recovery" zh="备份、监控、高可用与灾难恢复"/></li><li><B en="Scripting, configuration management and infrastructure as code" zh="脚本、配置管理与基础设施即代码"/></li></ul></section></div><div className="objective"><span><B en="Shared foundations" zh="共同基础"/></span><p><B en="TCP/IP, DNS, DHCP, security fundamentals, log analysis, scripting, change management and layered troubleshooting. Start with networking fundamentals before choosing a primary track." zh="TCP/IP、DNS、DHCP、基础安全、日志分析、脚本、变更管理与分层排障。建议先学完网络基础，再选择主要方向。"/></p></div><h2><B en="How do both roles investigate an inaccessible website?" zh="遇到“网站打不开”，如何协作？"/></h2><p className="body-copy"><B en="The network team checks routes, links, firewalls and port connectivity. The systems team checks DNS records, service listeners, certificates, application logs and resources. Both use a shared timeline and packet-capture evidence instead of drawing conclusions from ping alone." zh="网络侧检查路由、链路、防火墙与端口连通性；系统侧检查 DNS 记录、服务监听、证书、应用日志与资源。两边用同一时间线和抓包证据定位故障，避免只凭 ping 结果下结论。"/></p></article>}
 function Resources() {
   const curated = Object.values(resources);
   const readings = Array.from(new Map(lessons.map(lesson => [lesson.source.url, lesson.source])).values())
     .filter(source => !curated.some(resource => resource.url === source.url));
   return <article className="reader reference-library">
-    <h1><B en="Reference library" zh="学习资料库" /></h1>
+    <header className="section-cover library-cover"><NightBackdrop track="system"/><h1><B en="Reference library" zh="学习资料库" /></h1></header>
     <h2><B en="Start with these guides" zh="推荐先读" /></h2>
     <div className="reference-grid">
       {curated.map(resource => <a className="reference-card" key={resource.url} href={resource.url} target="_blank" rel="noreferrer">
-        <BookOpen size={20} aria-hidden="true" />
+        <div className="reference-source"><BookOpen size={16} aria-hidden="true" /><span>{new URL(resource.url).hostname}</span><ArrowUpRight size={16} aria-hidden="true" /></div>
         <h3><B {...resource.title} /></h3>
         <p><B {...resource.description} /></p>
       </a>)}

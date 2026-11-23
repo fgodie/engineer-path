@@ -23,6 +23,11 @@ function B({ en, zh }: { en: string; zh: string }) {
   return <span className="bi"><span lang="en" className="bi-en">{en}</span><span lang="zh-CN" className="bi-zh">{zh}</span></span>;
 }
 
+function NightBackdrop({ track }: { track: 'network' | 'system' }) {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  return <img className="night-backdrop" src={`${base}/scenes/${track}-night.jpg`} alt="" fetchPriority="high" width={1600} height={900}/>;
+}
+
 function HardwareBackdrop({ track }: { track: 'network' | 'system' }) {
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
   return <img className="hardware-backdrop" src={`${base}/hardware/${track}-cutaway.jpg`} alt="" fetchPriority="high" />;
@@ -226,7 +231,8 @@ function LearningSpace() {
                 })}
               </TabsList>
               <TabsContent value={track}>
-                <header className="atlas-cover">
+                <header className="atlas-cover night-cover">
+                  <NightBackdrop track={track}/>
                   <div className="atlas-title">
                     <h1>{track === 'network' ? <B en="Network engineering" zh="网络工程学习台"/> : <B en="Systems engineering" zh="系统工程学习台"/>}</h1>
                     <p>{track === 'network'
@@ -242,11 +248,11 @@ function LearningSpace() {
                       <span className="launch-topic"><B en={resumeLesson?.en ?? trackLessons[0].en} zh={resumeLesson?.title ?? trackLessons[0].title}/></span>
                     </div>
                     <div className="atlas-shortcuts">
+                      <a className="atlas-inspect" href="#inspect-device"><span lang="en">Inspect hardware</span><span lang="zh-CN">设备透视</span><ArrowRight size={14} aria-hidden="true"/></a>
                       <a className="atlas-browse" href="#catalog-title"><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={14} aria-hidden="true"/></a>
                       <a className="atlas-questions" href="#work-questions"><span lang="en">Work questions</span><span lang="zh-CN">按问题选课</span><ArrowRight size={14} aria-hidden="true"/></a>
                     </div>
                   </div>
-                  <DeviceInspector key={track} track={track}/>
                   <div className="study-progress">
                     <label htmlFor="track-progress"><B en="Track progress" zh="本方向进度" /></label>
                     <strong>{doneCount} / {trackLessons.length}</strong>
@@ -256,8 +262,9 @@ function LearningSpace() {
                 </header>
               </TabsContent>
             </Tabs>
-            <div className="practice-grid">
-            <PathDiagram key={track} track={track}/>
+            <div key={track} className="practice-grid inspection-bay">
+            <DeviceInspector track={track}/>
+            <PathDiagram track={track}/>
             <section className="field-index" aria-labelledby="work-questions">
               <h2 id="work-questions"><B en="Troubleshoot by question" zh="从工作中的问题开始"/></h2>
               <div className="field-links">{workTopics.map(({id, Icon}) => {
@@ -386,7 +393,7 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
   </Topbar>
   <div className="workspace"><article className="reader">
   <button className="back" onClick={onBack}><ChevronLeft size={16}/><B en={parentLesson ? 'Return to '+parentLesson.en : backToPacket ? 'Back to Packet Tracer labs' : 'Back to learning path'} zh={parentLesson ? '返回原课 · '+parentLesson.title : backToPacket ? '返回 Packet Tracer 实验' : '返回学习路径'}/></button>
-  <div className="reader-cover"><HardwareBackdrop track={l.track}/><p className="reader-domain">{l.track === 'network' ? <Network size={17} aria-hidden="true"/> : <Server size={17} aria-hidden="true"/>}<span>{l.id.toUpperCase()}</span><B en={stageNames[l.stage]} zh={stages.find(stage => stage.key === l.stage)?.name ?? l.stage}/></p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
+  <div className="reader-cover night-cover"><NightBackdrop track={l.track}/><p className="reader-domain">{l.track === 'network' ? <Network size={17} aria-hidden="true"/> : <Server size={17} aria-hidden="true"/>}<span>{l.id.toUpperCase()}</span><B en={stageNames[l.stage]} zh={stages.find(stage => stage.key === l.stage)?.name ?? l.stage}/></p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
   <div ref={panelsRef} className="lesson-panels">
    <TabsContent value="read">
     <section className="field-case">

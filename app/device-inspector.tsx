@@ -52,7 +52,7 @@ export function DeviceInspector({ track }: { track: keyof typeof devices }) {
   const caption = cutaway ? detail : { name: device.title, text: device.bench };
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
-  return <figure className="device-inspector" aria-label={device.title}>
+  return <figure id="inspect-device" className="device-inspector" aria-label={device.title}>
     <header className="inspector-head">
     <strong>{device.title}</strong>
     <div className="inspector-modes" role="group" aria-label="Device view / 设备视图">

@@ -3,7 +3,7 @@
 export const dynamic = 'force-static';
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Check, ChevronLeft, Circle, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
+import { ArrowRight, BookOpen, Cable, Clock, HardDrive, Radio, Check, ChevronLeft, Circle, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { lessons as originalLessons, stages, type Lesson } from './lessons';
@@ -28,6 +28,10 @@ function commandText(text: string) {
 
 const lessons = addFoundations(originalLessons);
 const english = { ...originalEnglish, ...foundationEnglish };
+const workTopics = [
+  { id: 'n17', Icon: Cable }, { id: 'n18', Icon: Radio },
+  { id: 'n19', Icon: HardDrive }, { id: 's12', Icon: Clock },
+];
 const referenceTitles = {
   ...sourceChinese,
   ...Object.fromEntries(Object.values(resources).map(({ title }) => [title.en, title.zh])),
@@ -195,7 +199,7 @@ function LearningSpace() {
         })}
       </SidebarContent>
     </Sidebar>
-    <main className="main">
+    <main className="main" data-theme-track={selected?.track ?? (view === 'packet' ? 'network' : track)}>
       <header className="topbar">
         <div><SidebarTrigger aria-label="Toggle navigation / 展开或收起导航" /><b><B en={views[view].en} zh={views[view].zh} /></b></div>
         <span className="language">EN + 中文</span>
@@ -210,14 +214,6 @@ function LearningSpace() {
           onOpenLesson={lesson => openLesson(lesson, [...reviewTrail, selected])} completed={progress.completed.includes(selected.id)} onToggleCompleted={toggleCompleted}
           onNext={nextLesson ? () => openLesson(nextLesson) : undefined} />
           : view === 'courses' ? <>
-            <header className="atlas-cover">
-              <div className="atlas-title">
-                <h1><B en="Network & systems engineering" zh="网络与系统工程学习手册" /></h1>
-                <p><B en="Follow a request from laptop to server, then learn to diagnose each link in its journey." zh="从电脑发出的一次请求开始，逐步学会判断沿途每个环节是否正常。" /></p>
-                <a className="atlas-browse" href="#track-selector"><BookOpen size={16} aria-hidden="true" /><span lang="en">Explore {lessons.length} lessons</span><span lang="zh-CN">浏览 {lessons.length} 节课</span><ArrowRight size={16} aria-hidden="true"/></a>
-              </div>
-              <PathDiagram />
-            </header>
             <Tabs value={track} onValueChange={value => chooseTrack(value as Track)}>
               <TabsList id="track-selector" className="track-tabs">
                 {(Object.keys(tracks) as Track[]).map(id => {
@@ -226,6 +222,17 @@ function LearningSpace() {
                 })}
               </TabsList>
               <TabsContent value={track}>
+                <header className="atlas-cover">
+                  <div className="atlas-title">
+                    <h1>{track === 'network' ? <B en="Network engineering" zh="网络工程学习台"/> : <B en="Systems engineering" zh="系统工程学习台"/>}</h1>
+                    <p>{track === 'network'
+                      ? <B en="Follow a packet from an office laptop to its destination. Learn what to check at each hop." zh="跟随一个数据包从办公电脑走到目的地，逐站学习该检查什么。"/>
+                      : <B en="Follow a service from its running process to a working response. Learn how to tell where it stopped." zh="从进程启动一路跟到服务响应，学会判断问题发生在哪一步。"/>}</p>
+                    <a className="atlas-browse" href="#catalog-title"><BookOpen size={16} aria-hidden="true"/><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={16} aria-hidden="true"/></a>
+                    <a className="atlas-questions" href="#work-questions"><span lang="en">Find a work question</span><span lang="zh-CN">按问题选课</span></a>
+                  </div>
+                  <PathDiagram key={track} track={track} />
+                </header>
                 <section className="study-dashboard" aria-label="Your progress / 学习进度">
                   <div className="study-next">
                     <div className="study-icon"><BookOpen size={24} aria-hidden="true" /></div>
@@ -252,6 +259,17 @@ function LearningSpace() {
                 <p><B en="Three guided labs with screenshots and downloadable .pkt files." zh="三套引导实验，包含截图和可下载的 .pkt 文件。" /></p></div>
               <button className="study-button" onClick={() => openPacketLab(packetTracerLabs[0].id)}><B en="Open guided labs" zh="打开引导实验" /></button>
             </div>}
+            <section className="field-index" aria-labelledby="work-questions">
+              <h2 id="work-questions"><B en="Troubleshoot by question" zh="从工作中的问题开始"/></h2>
+              <div className="field-links">{workTopics.map(({id, Icon}) => {
+                const lesson = trackLessons.find(item => item.id === id);
+                if (!lesson) return null;
+                const [en, zh] = fieldCases[id].question;
+                return <button type="button" key={id} onClick={() => openLesson(lesson)}>
+                  <Icon className="field-topic-icon" size={22} aria-hidden="true"/><B en={en} zh={zh}/><ArrowRight size={16} aria-hidden="true"/>
+                </button>;
+              })}</div>
+            </section>
             <section className="course-catalog" aria-labelledby="catalog-title">
               <div className="catalog-heading">
                 <h2 id="catalog-title"><B en="Course catalog" zh="课程目录" /></h2>
@@ -319,7 +337,7 @@ function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacke
  const packetLab=packetTracerLabForLesson(l.id === 'n13' ? 'n01' : l.id);
  return <article className="reader">
   <button className="back" onClick={onBack}><ChevronLeft size={16}/><B en={parentLesson ? 'Return to '+parentLesson.en : backToPacket ? 'Back to Packet Tracer labs' : 'Back to learning path'} zh={parentLesson ? '返回原课 · '+parentLesson.title : backToPacket ? '返回 Packet Tracer 实验' : '返回学习路径'}/></button>
-  <div className="reader-cover"><div className="reader-orbit" aria-hidden="true"/><p className="overline">{l.id.toUpperCase()} / ENGLISH + 中文</p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
+  <div className="reader-cover"><div className="reader-orbit" aria-hidden="true"/><p className="reader-domain">{l.track === 'network' ? <Network size={17} aria-hidden="true"/> : <Server size={17} aria-hidden="true"/>}<span>{l.id.toUpperCase()}</span><B en={stageNames[l.stage]} zh={stages.find(stage => stage.key === l.stage)?.name ?? l.stage}/></p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
   <Tabs defaultValue="read">
    <TabsList className="reader-tabs">
     <TabsTrigger value="read"><B en="Concepts" zh="知识讲解"/></TabsTrigger>

@@ -11,7 +11,7 @@ const packets = [
 const filters = ['All', 'DNS', 'TCP'] as const;
 
 export function hasFoundationVisual(lessonId: string) {
-  return ['n13', 'n14', 'n15', 'n16', 's11'].includes(lessonId);
+  return ['n13', 'n14', 'n15', 'n16', 's11', 'n18', 's12'].includes(lessonId);
 }
 
 function PacketTable() {
@@ -66,8 +66,42 @@ function ErrorBudget() {
   </figure>;
 }
 
+const sessionEvents = [
+  ['09:00:00', 'Manager', 'WAN-A', 'DOWN / 中断'],
+  ['09:00:20', 'Controller', 'WAN-B', 'UP / 已连接'],
+  ['09:01:30', 'Manager', 'WAN-A', 'UP / 已连接'],
+];
+
+function SessionTimeline() {
+  const [peer, setPeer] = useState('All');
+  return <figure className="evidence-panel">
+    <figcaption>Session timeline · UTC / 会话时间线</figcaption>
+    <fieldset className="packet-filters" aria-label="Filter by peer / 按对端筛选">
+      {['All', 'Manager', 'Controller'].map(value => <button type="button" key={value} aria-pressed={peer === value} onClick={() => setPeer(value)}>{value === 'All' ? 'All / 全部' : value}</button>)}
+    </fieldset>
+    <ol className="event-stream">{sessionEvents.filter(row => peer === 'All' || row[1] === peer).map(([time, name, link, state]) => <li key={time}>
+      <time>{time}</time><span>{name} · {link}</span><b>{state}</b>
+    </li>)}</ol>
+    <output>{peer === 'Manager' ? 'Same peer and link · 90 s between events / 同一对端与链路，两条记录相隔 90 秒' : peer === 'Controller' ? 'One UP event · outage duration unknown / 仅有一条连接记录，无法计算中断时长' : 'Two different sessions / 这里有两条不同的会话'}</output>
+  </figure>;
+}
+
+function ClockComparison() {
+  const [zone, setZone] = useState('SGT');
+  return <figure className="evidence-panel">
+    <figcaption>Read both clocks at one instant / 比较同一瞬间的两台时钟</figcaption>
+    <fieldset className="packet-filters" aria-label="Router display time zone / 路由器显示时区">
+      {['SGT', 'UTC'].map(value => <button type="button" key={value} aria-pressed={value === zone} onClick={() => setZone(value)}>{value}</button>)}
+    </fieldset>
+    <dl className="clock-readings"><div><dt>Router / 路由器</dt><dd>{zone === 'SGT' ? '06-12 00:00:45 SGT' : '06-11 16:00:45 UTC'}</dd></div><div><dt>Reference / 参考</dt><dd>06-11 16:00:00 UTC</dd></div></dl>
+    <output>{zone === 'SGT' ? 'SGT = UTC + 8 h · select UTC to compare / 切换到 UTC 后对照' : 'Router ahead by 45 s / 路由器快 45 秒'}</output>
+  </figure>;
+}
+
 export function FoundationVisual({ lessonId, section, lab = false }: { lessonId: string; section?: number; lab?: boolean }) {
   if (lessonId === 'n14' && (lab || section === 1)) return <PacketTable />;
+  if (lessonId === 'n18' && (lab || section === 1)) return <SessionTimeline />;
+  if (lessonId === 's12' && (lab || section === 0)) return <ClockComparison />;
   if (lab) return null;
   if (lessonId === 'n16' && section === 0) return <TransferTime />;
   if (lessonId === 's11' && section === 2) return <ErrorBudget />;

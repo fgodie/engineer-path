@@ -8,6 +8,30 @@ type FieldCase = {
 };
 
 export const fieldCases: Record<string, FieldCase> = {
+  n17: {
+    review: 'n16',
+    question: ['A camera went offline after a cable change. Was the cable at fault?', '换网线后摄像头离线，可以判定是线坏了吗？'],
+    evidence: ['A recorder flags camera B as offline after a new device is connected. The switch reports that B requested 15 W and was denied. Only 8 W were available.', '接入新设备后，录像机提示摄像头 B 离线。交换机记录 B 请求 15 W 时被拒，当时只剩 8 W 可分配。'],
+    reasoning: ['The power request exceeded the available budget. That explains why B could not obtain power in this sample. Record the port and allocation first. The timing of the cable change alone cannot establish a cable fault.', '这次供电申请超过剩余预算，能解释样例中 B 为什么拿不到电。先记录端口和功率分配情况。仅凭换线与离线发生在相近时间，无法判定线坏。'],
+  },
+  n18: {
+    review: 'n09',
+    question: ['The Manager session dropped. Did the branch lose service?', 'Manager 会话中断，是不是整个分支都断网了？'],
+    evidence: ['An edge reports a down event for its Manager on WAN-A, followed by an up event for a Controller on WAN-B. There is no application measurement in the excerpt.', '边缘设备先报告 WAN-A 上的 Manager 会话中断，随后报告 WAN-B 上的 Controller 会话建立。日志片段里没有应用测量数据。'],
+    reasoning: ['The events identify different peers and links. Report them separately. Find a later entry or current state for Manager on WAN-A, then check the branch application for the same window before describing user impact.', '两条记录的对端和链路都不同，应分开汇报。先找 WAN-A 上 Manager 的后续记录或当前状态，再核对同一时段的分支应用数据，才能说明用户影响。'],
+  },
+  n19: {
+    review: 'n11',
+    question: ['Storage is full and only one image is listed. What can you conclude?', '升级空间不足，清单里只剩一个镜像，可以确定什么？'],
+    evidence: ['One version appears with both ACTIVE and DEFAULT flags. The preflight check reports insufficient staging space. No other installed image appears in the inventory.', '清单中一个版本同时标记 ACTIVE 和 DEFAULT。升级前检查报告暂存空间不足，清单里没有列出其他已安装镜像。'],
+    reasoning: ['Both flags refer to that same version. The report establishes a capacity problem and identifies no unused version. Measure the gap, record the model and upgrade path, and obtain a supported option that preserves recovery.', '两个标记都属于同一个版本。已确认容量不足，尚未识别出闲置版本。量出空间缺口，记录型号和升级路径，再确认能保留恢复能力的受支持方案。'],
+  },
+  s12: {
+    review: 's01',
+    question: ['Do these clocks differ by eight hours?', '两台设备的日志相差八小时，时钟真的错了吗？'],
+    evidence: ['At the same instant, an edge router reads 17:20 SGT and a reference server reads 09:20 UTC. Both display the same calendar date.', '在同一瞬间，边缘路由器显示 17:20 SGT，参考服务器显示 09:20 UTC，两者显示同一个日期。'],
+    reasoning: ['Subtract eight hours from the Singapore reading. Both display 09:20 UTC to the minute. Check the time source and NTP status separately before making any clock adjustment.', '新加坡时间减八小时，两个读数都是 UTC 09:20，精确到分钟一致。决定是否需要调时前，再单独核对时间源和 NTP 同步状态。'],
+  },
   n01: {
     question: ['Who hands your message to the printer?', '电脑发出的打印任务，谁把它交给打印机？'],
     evidence: ['Your laptop and printer sit on the same office network. Both plug into a switch. The printer already has an IP address and your laptop knows it.', '办公室电脑和打印机在同一个网段，两根网线都接到交换机。打印机已有 IP 地址，电脑也知道这个地址。'],

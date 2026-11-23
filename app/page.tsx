@@ -9,6 +9,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { lessons as originalLessons, stages, type Lesson } from './lessons';
 import { english as originalEnglish } from './english';
 import { addFoundations, foundationEnglish, resources } from './foundations';
+import { fieldCases } from './field-cases';
+import { PathDiagram } from './path-diagram';
 import { LessonFigure } from './lesson-figure';
 import { FoundationVisual, hasFoundationVisual } from './foundation-visual';
 import { lessonDiagrams } from './lesson-diagrams';
@@ -58,7 +60,7 @@ const searchable = new Map(lessons.map(lesson => {
   const translation = english[lesson.id];
   const terms = [
     lesson.id, lesson.title, lesson.en, lesson.summary, translation.summary,
-    lesson.lab.command,
+    lesson.lab.command, ...fieldCases[lesson.id].question, ...fieldCases[lesson.id].evidence, ...fieldCases[lesson.id].reasoning,
     ...lesson.sections.flatMap(({ heading, body }) => [heading, body]),
     ...translation.sections.flatMap(({ heading, body }) => [heading, body]),
   ];
@@ -94,6 +96,7 @@ function LearningSpace() {
   const { setOpenMobile } = useSidebar();
   const [track, setTrack] = useState<Track>('network');
   const [selected, setSelected] = useState<Lesson | null>(null);
+  const [reviewTrail, setReviewTrail] = useState<Lesson[]>([]);
   const [view, setView] = useState<View>('courses');
   const [packetLabId, setPacketLabId] = useState<string>();
   const [query, setQuery] = useState('');
@@ -101,6 +104,8 @@ function LearningSpace() {
   const [progress, setProgress] = useState<Progress>(emptyProgress);
 
   useEffect(() => {
+    // Browser-only storage becomes available after the static page hydrates.
+    // oxlint-disable-next-line react/react-compiler
     setProgress(readProgress());
   }, []);
 
@@ -116,6 +121,7 @@ function LearningSpace() {
   function navigate(nextView: View) {
     setView(nextView);
     setSelected(null);
+    setReviewTrail([]);
     setOpenMobile(false);
     window.scrollTo({ top: 0 });
   }
@@ -131,7 +137,8 @@ function LearningSpace() {
     navigate('packet');
   }
 
-  function openLesson(lesson: Lesson) {
+  function openLesson(lesson: Lesson, trail: Lesson[] = []) {
+    setReviewTrail(trail);
     saveProgress({ ...progress, lastOpened: { ...progress.lastOpened, [lesson.track]: lesson.id } });
     if (view === 'courses') setTrack(lesson.track);
     setSelected(lesson);
@@ -194,18 +201,25 @@ function LearningSpace() {
         <span className="language">EN + 中文</span>
       </header>
       <div className="workspace">
-        {selected ? <LessonView key={selected.id} lesson={selected} onBack={() => navigate(view)} backToPacket={view === 'packet'} onPacketTracer={openPacketLab}
-          completed={progress.completed.includes(selected.id)} onToggleCompleted={toggleCompleted}
+        {selected ? <LessonView key={selected.id} lesson={selected} parentLesson={reviewTrail.at(-1)}
+          onBack={() => {
+            const parent = reviewTrail.at(-1);
+            if (parent) openLesson(parent, reviewTrail.slice(0, -1));
+            else navigate(view);
+          }} backToPacket={view === 'packet'} onPacketTracer={openPacketLab}
+          onOpenLesson={lesson => openLesson(lesson, [...reviewTrail, selected])} completed={progress.completed.includes(selected.id)} onToggleCompleted={toggleCompleted}
           onNext={nextLesson ? () => openLesson(nextLesson) : undefined} />
           : view === 'courses' ? <>
-            <div className="page-heading">
-              <div>
+            <header className="atlas-cover">
+              <div className="atlas-title">
                 <h1><B en="Network & systems engineering" zh="网络与系统工程学习手册" /></h1>
-                <p className="intro"><B en={`${lessons.length} bilingual lessons with practical labs and quick checks`} zh={`${lessons.length} 节中英对照课程，配有动手实验和自测`} /></p>
+                <p><B en="Follow a request from laptop to server, then learn to diagnose each link in its journey." zh="从电脑发出的一次请求开始，逐步学会判断沿途每个环节是否正常。" /></p>
+                <a className="atlas-browse" href="#track-selector"><BookOpen size={16} aria-hidden="true" /><span lang="en">Explore {lessons.length} lessons</span><span lang="zh-CN">浏览 {lessons.length} 节课</span><ArrowRight size={16} aria-hidden="true"/></a>
               </div>
-            </div>
+              <PathDiagram />
+            </header>
             <Tabs value={track} onValueChange={value => chooseTrack(value as Track)}>
-              <TabsList className="track-tabs">
+              <TabsList id="track-selector" className="track-tabs">
                 {(Object.keys(tracks) as Track[]).map(id => {
                   const { Icon, en, zh } = tracks[id];
                   return <TabsTrigger value={id} key={id}><Icon aria-hidden="true" /><B en={en} zh={zh} /></TabsTrigger>;
@@ -241,7 +255,7 @@ function LearningSpace() {
             <section className="course-catalog" aria-labelledby="catalog-title">
               <div className="catalog-heading">
                 <h2 id="catalog-title"><B en="Course catalog" zh="课程目录" /></h2>
-                <p role="status"><B en={`${results.length} lessons${terms.length ? ' across both tracks' : ''}`} zh={`${results.length} 节课程${terms.length ? ' · 搜索两个方向' : ''}`} /></p>
+                <output><B en={`${results.length} lessons${terms.length ? ' across both tracks' : ''}`} zh={`${results.length} 节课程${terms.length ? ' · 搜索两个方向' : ''}`} /></output>
               </div>
               <div className="catalog-controls">
                 <div>
@@ -253,7 +267,10 @@ function LearningSpace() {
                 </div>
                 <label className="catalog-filter"><input type="checkbox" checked={unfinished} onChange={event => setUnfinished(event.target.checked)} /><B en="Unfinished only" zh="只看未完成" /></label>
               </div>
-              {results.length ? visibleStages.map(stage => <section key={stage.key} className="catalog-stage">
+              {!terms.length && visibleStages.length > 1 && <nav className="stage-jumps" aria-label="Jump to stage / 跳到学习阶段">
+                {visibleStages.map(stage => <a key={stage.key} href={`#stage-${stage.key}`}><B en={stageNames[stage.key]} zh={stage.name}/><span aria-hidden="true">↘</span></a>)}
+              </nav>}
+              {results.length ? visibleStages.map(stage => <section key={stage.key} id={`stage-${stage.key}`} className="catalog-stage">
                 <div className="catalog-stage-heading">
                   <h3><B en={stageNames[stage.key]} zh={stage.name} /></h3>
                   <p><B en={stageEnglish[stage.key].description} zh={stage.description} /></p>
@@ -284,8 +301,10 @@ function LearningSpace() {
     </main>
   </>;
 }
-function LessonView({ lesson: l, onBack, backToPacket, onNext, onPacketTracer, completed, onToggleCompleted }: {
+function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacket, onNext, onPacketTracer, completed, onToggleCompleted }: {
   lesson: Lesson;
+  parentLesson?: Lesson;
+  onOpenLesson: (lesson: Lesson) => void;
   onBack: () => void;
   backToPacket: boolean;
   onNext?: () => void;
@@ -295,9 +314,11 @@ function LessonView({ lesson: l, onBack, backToPacket, onNext, onPacketTracer, c
 }) {
  const [answer,setAnswer]=useState<number|null>(null);
  const e=english[l.id];
+ const example=fieldCases[l.id];
+ const review=lessons.find(item => item.id === example.review);
  const packetLab=packetTracerLabForLesson(l.id === 'n13' ? 'n01' : l.id);
  return <article className="reader">
-  <button className="back" onClick={onBack}><ChevronLeft size={16}/><B en={backToPacket ? 'Back to Packet Tracer labs' : 'Back to learning path'} zh={backToPacket ? '返回 Packet Tracer 实验' : '返回学习路径'}/></button>
+  <button className="back" onClick={onBack}><ChevronLeft size={16}/><B en={parentLesson ? 'Return to '+parentLesson.en : backToPacket ? 'Back to Packet Tracer labs' : 'Back to learning path'} zh={parentLesson ? '返回原课 · '+parentLesson.title : backToPacket ? '返回 Packet Tracer 实验' : '返回学习路径'}/></button>
   <div className="reader-cover"><div className="reader-orbit" aria-hidden="true"/><p className="overline">{l.id.toUpperCase()} / ENGLISH + 中文</p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
   <Tabs defaultValue="read">
    <TabsList className="reader-tabs">
@@ -306,6 +327,17 @@ function LessonView({ lesson: l, onBack, backToPacket, onNext, onPacketTracer, c
     <TabsTrigger value="quiz"><B en="Knowledge check" zh="课后自测"/></TabsTrigger>
    </TabsList>
    <TabsContent value="read">
+    <section className="field-case">
+      <p className="case-label"><FlaskConical size={16} aria-hidden="true" /><B en="Worked example" zh="先看一个例子"/></p>
+      <h2><B en={example.question[0]} zh={example.question[1]}/></h2>
+      <p className="case-evidence"><B en={example.evidence[0]} zh={example.evidence[1]}/></p>
+      <details><summary><B en="Walk through the answer" zh="展开看推理过程"/></summary>
+        <p><B en={example.reasoning[0]} zh={example.reasoning[1]}/></p>
+      </details>
+      {review && <button type="button" className="case-review" onClick={() => onOpenLesson(review)}>
+        <BookOpen size={16} aria-hidden="true"/><B en={'Review first · '+review.en} zh={'先修回顾 · '+review.title}/>
+      </button>}
+    </section>
     <div className="objective"><span><B en="By the end of this lesson, you can" zh="学完这一课，你能够"/></span><p><B en={e.objective} zh={l.objective}/></p></div>
     {l.sections.map((section,i)=><section className="lesson-section" key={section.heading}><h2><B en={e.sections[i].heading} zh={section.heading}/></h2><p><B en={e.sections[i].body} zh={section.body}/></p><LessonFigure lessonId={l.id} section={i}/><FoundationVisual lessonId={l.id} section={i}/></section>)}
     <div className="takeaway"><b><B en="Key takeaway" zh="记住这一点"/></b><p><B en={e.takeaway} zh={l.takeaway}/></p></div>
@@ -325,7 +357,7 @@ function LessonView({ lesson: l, onBack, backToPacket, onNext, onPacketTracer, c
     <p className="overline"><B en="Check your understanding" zh="检查你的理解"/></p>
     <h2><B en={e.quiz.question} zh={l.quiz.question}/></h2>
     <div className="options">{l.quiz.options.map((option,i)=><button key={option} aria-pressed={answer===i} className={answer===i?'selected':''} onClick={()=>setAnswer(i)}>{answer===i?<Check size={18}/>:<Circle size={18}/>}<B en={e.quiz.options[i]} zh={option}/></button>)}</div>
-    {answer!==null&&<div role="status" className={`feedback ${answer===l.quiz.correct?'correct':''}`}><b><B en={answer===l.quiz.correct?'Correct':'Try again'} zh={answer===l.quiz.correct?'回答正确':'再想一想'}/></b><p><B en={e.quiz.explanation} zh={l.quiz.explanation}/></p></div>}
+    {answer!==null&&<div aria-live="polite" className={`feedback ${answer===l.quiz.correct?'correct':''}`}><b><B en={answer===l.quiz.correct?'Correct':'Try again'} zh={answer===l.quiz.correct?'回答正确':'再想一想'}/></b><p><B en={e.quiz.explanation} zh={l.quiz.explanation}/></p></div>}
    </section></TabsContent>
   </Tabs>
   <div className="reader-end study-actions">

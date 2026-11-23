@@ -10,6 +10,16 @@ export const resources = {
     description: pair('Install the simulator and build a small network before attempting the guided labs.', '先安装模拟器并搭建一个小网络，再开始站内的引导实验。'),
     url: 'https://www.netacad.com/courses/getting-started-cisco-packet-tracer/1000',
   },
+  throughput: {
+    title: pair('RFC 6349 · TCP throughput testing', 'RFC 6349 · TCP 吞吐量测试'),
+    description: pair('Read section 3.2 for round-trip time and bottleneck bandwidth.', '阅读第 3.2 节，了解往返时间和瓶颈带宽。'),
+    url: 'https://datatracker.ietf.org/doc/html/rfc6349#section-3.2',
+  },
+  reliability: {
+    title: pair('Google SRE Workbook · Implementing SLOs', 'Google SRE 工作手册 · 制定服务级别目标'),
+    description: pair('Follow the worked examples of success ratios and error budgets.', '通过实例学习怎样计算成功率和错误预算。'),
+    url: 'https://sre.google/workbook/implementing-slos/',
+  },
   arp: {
     title: pair('RFC 826 · Address Resolution Protocol', 'RFC 826 · 地址解析协议'),
     description: pair('Read the packet format and see how ARP requests and replies are processed.', '查看报文格式，以及 ARP 请求和应答如何处理。'),
@@ -50,6 +60,48 @@ type Foundation = Pick<Lesson, 'id' | 'track' | 'stage' | 'minutes'> & {
 };
 
 const foundations: Foundation[] = [
+  {
+    id: 'n16', after: 'n01', track: 'network', stage: 'n1', minutes: 12,
+    title: pair('Bandwidth, delay & packet loss', '带宽、延迟与丢包'),
+    summary: pair('Turn “the network is slow” into a measurement you can explain.', '把“网络很慢”变成你能解释清楚的一项测量结果。'),
+    objective: pair('Distinguish capacity from actual throughput and calculate a transfer time and a probe loss rate.', '区分线路容量和实际吞吐量，算出传输所需时间与探测丢包率。'),
+    sections: [
+      { heading: pair('How much data fits in a second?', '一秒钟能传多少数据？'), body: pair('Bandwidth describes capacity. Throughput is the rate you actually observe. A byte contains eight bits, so a 10 MB file contains 80 megabits in decimal units. At a steady payload rate of 20 Mb/s it takes 80 ÷ 20 = 4 seconds to transfer.', '带宽表示线路的容量，吞吐量是实际测得的传输速率。一个字节有八个位。按十进制单位计算，10 MB 的文件有 80 兆位。如果有效数据的传输速率稳定在每秒 20 兆位，就需要 80 ÷ 20 = 4 秒。') },
+      { heading: pair('How long does one exchange take?', '一次来回要等多久？'), body: pair('Round-trip time (RTT) measures the time from sending a probe to receiving its reply. If a tiny request waits 120 ms for a reply, a faster file-transfer rate alone cannot guarantee a faster reply. Queuing, distance and the remote endpoint can all affect the wait.', '往返时间（RTT）是从发出探测到收到应答的时间。如果一个小请求的应答要等 120 毫秒，单靠提高文件传输速率不能保证缩短这段等待。排队、距离、远端处理都可能影响结果。') },
+      { heading: pair('Count what did not return', '数一数有多少次没有应答'), body: pair('If 98 out of 100 probes receive replies, the observed probe loss is 2%. Either direction of the path or the reply behaviour of the endpoint can affect this number. Record the endpoints, time and sample size before comparing tests.', '发出 100 次探测，收到 98 次应答，观测到的探测丢包率就是 2%。去程、回程以及终点是否响应都会影响结果。比较两次测试前，先记录两端位置、测试时间和样本数量。') },
+    ],
+    takeaway: pair('Report the unit with the number: Mb/s for rate, ms for time, and % for observed loss.', '汇报时带上单位：Mb/s 表示速率，ms 表示时间，% 表示观察到的丢包比例。'),
+    resource: 'throughput',
+    lab: {
+      title: pair('Read a branch-office measurement', '读一份分公司测量记录'),
+      environment: pair('The sample below and a calculator.', '使用下面的样例和计算器即可。'),
+      steps: [pair('Convert the sample file size from megabytes to megabits.', '把样例文件大小从兆字节换算为兆位。'), pair('Divide by the measured payload rate. Record the result in seconds.', '用兆位数除以实际有效速率，以秒为单位记录结果。'), pair('Calculate the proportion of probes without replies. Record the RTT separately.', '计算未获应答的探测比例，另行记录 RTT。')],
+      command: 'File / 文件   25 MB\nPayload rate / 有效速率   40 Mb/s\nProbes sent / 发出   50\nReplies / 应答   49\nMedian RTT / 往返时间中位数   35 ms',
+      verify: pair('25 × 8 ÷ 40 = 5 seconds. One missing reply out of fifty gives 2% observed loss. The median round trip was 35 ms.', '25 × 8 ÷ 40 = 5 秒。50 次探测少了 1 次应答，观测丢包率为 2%，往返时间中位数是 35 毫秒。'),
+    },
+    quiz: { question: pair('A 5 MB file arrives in 2 seconds. What is the average payload rate?', '一个 5 MB 的文件在 2 秒内传完，平均有效速率是多少？'), options: [pair('2.5 Mb/s', '每秒 2.5 兆位'), pair('20 Mb/s', '每秒 20 兆位'), pair('40 Mb/s', '每秒 40 兆位')], correct: 1, explanation: pair('5 MB × 8 = 40 megabits. Divide by 2 seconds to get 20 Mb/s.', '5 兆字节乘以 8 是 40 兆位，再除以 2 秒，得到 20 Mb/s。') },
+  },
+  {
+    id: 's11', after: 's07', track: 'system', stage: 's2', minutes: 15,
+    title: pair('Service reliability & error budgets', '服务可靠性与错误预算'),
+    summary: pair('Use checkout results to tell whether a service met its promise to users.', '用结算结果判断服务有没有达到向用户承诺的目标。'),
+    objective: pair('Define a service level indicator (SLI), set a service level objective (SLO) and interpret the remaining error budget.', '定义服务级别指标（SLI）、设置服务级别目标（SLO），并解释剩余的错误预算。'),
+    sections: [
+      { heading: pair('Decide what counts as good', '先约定什么算成功'), body: pair('For this shop, an eligible checkout is a valid order attempt. A good attempt receives a confirmation within two seconds. Divide good attempts by eligible attempts to get the SLI. Count slow confirmations as failures for this indicator, even if the order eventually completes.', '这家商店约定，格式有效的下单尝试都纳入统计。两秒内收到订单确认才算成功。成功次数除以纳入统计的次数就是 SLI。即使最终下单成功，超过两秒也不计入这项指标的成功次数。') },
+      { heading: pair('Set the target and window', '明确目标和统计窗口'), body: pair('Suppose the team agrees that at least 99% of eligible attempts should be good over a calendar month. That is an SLO. Report the window alongside the percentage, since a quiet hour and a busy month represent different evidence.', '假设团队约定每个自然月内，达标的下单尝试至少占 99%，这就是 SLO。汇报百分比时要附上统计窗口，清闲的一小时和忙碌的一个月反映的情况不同。') },
+      { heading: pair('Use the budget to make a decision', '用剩余预算决定下一步'), body: pair('With 2,000 eligible attempts, a 99% target allows 20 to miss. If 18 missed, only two remain for that volume. Before the next release, compare the observed failures with the team’s agreed policy and decide whether to prioritise a fix.', '在 2,000 次有效尝试中，99% 的目标允许 20 次未达标。如果已有 18 次未达标，在这个请求量下就只剩两次余量。下一次发版前，把失败情况和团队事先约定的规则对照，决定是否应优先修复。') },
+    ],
+    resource: 'reliability',
+    takeaway: pair('Agree on good events, eligible events, a target and a window before drawing a conclusion.', '先约定何为成功、哪些事件纳入统计、目标值和统计窗口，再判断是否达标。'),
+    lab: {
+      title: pair('Write a one-line reliability report', '写一条服务可靠性报告'),
+      environment: pair('A completed reporting window and the sample counts below.', '使用下面一个已结束的统计窗口的样例数据。'),
+      steps: [pair('Calculate the percentage of requests confirmed on time.', '计算按时确认的请求百分比。'), pair('Calculate the permitted number of misses and subtract actual misses.', '算出容许的失败次数，再减去实际失败次数。'), pair('Report the result together with the target and reporting period.', '把结果、目标和统计周期写进同一句报告。')],
+      command: 'Period / 周期   April / 四月\nEligible / 有效请求   4,000\nOn time / 按时确认   3,964\nTarget / 目标   99%',
+      verify: pair('In April, 3,964 of 4,000 attempts met the limit (99.1%). We met the 99% objective with four of forty permitted misses unused.', '四月共有 4,000 次尝试，3,964 次按时完成（99.1%），达到 99% 的目标。允许的 40 次失败中还有 4 次余量。'),
+    },
+    quiz: { question: pair('With 1,000 eligible requests and a 99% target, how many can miss while still meeting the target?', '1,000 次有效请求，目标为至少 99% 达标，最多允许几次未达标？'), options: [pair('One', '1 次'), pair('Ten', '10 次'), pair('One hundred', '100 次')], correct: 1, explanation: pair('990 of 1,000 must be good. Ten may miss. Eleven misses would reduce the indicator to 98.9%.', '1,000 次里至少 990 次要达标，可容许 10 次未达标。若有 11 次未达标，指标就会降至 98.9%。') },
+  },
   {
     id: 'n13', after: 'n02', track: 'network', stage: 'n1', minutes: 15,
     title: pair('Ethernet, MAC addresses & ARP', '以太网、MAC 地址与 ARP'),

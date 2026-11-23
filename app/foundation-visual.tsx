@@ -11,7 +11,7 @@ const packets = [
 const filters = ['All', 'DNS', 'TCP'] as const;
 
 export function hasFoundationVisual(lessonId: string) {
-  return ['n13', 'n14', 'n15'].includes(lessonId);
+  return ['n13', 'n14', 'n15', 'n16', 's11'].includes(lessonId);
 }
 
 function PacketTable() {
@@ -19,13 +19,13 @@ function PacketTable() {
   const visible = packets.filter(packet => filter === 'All' || packet.protocol === filter);
   return <figure className="foundation-visual">
     <figcaption><strong>Simulated packet capture / 模拟抓包</strong></figcaption>
-    <div className="packet-filters" role="group" aria-label="Display filter / 显示过滤器">
+    <fieldset className="packet-filters" aria-label="Display filter / 显示过滤器">
       {filters.map(value => <button type="button" key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>
         {value === 'All' ? 'All / 全部' : value}
       </button>)}
-      <span role="status">{visible.length} / {packets.length} packets · 报文</span>
-    </div>
-    <div className="packet-table-scroll" role="region" aria-label="Packet table / 报文表" tabIndex={0}>
+      <output>{visible.length} / {packets.length} packets · 报文</output>
+    </fieldset>
+    <section className="packet-table-scroll" aria-label="Packet table / 报文表">
       <table>
         <thead><tr>
           <th scope="col">Time / 秒</th><th scope="col">Protocol / 协议</th><th scope="col">Source / 源</th>
@@ -35,13 +35,42 @@ function PacketTable() {
           <td>{packet.time}</td><td>{packet.protocol}</td><td>{packet.from}</td><td>{packet.to}</td><td>{packet.detail}</td>
         </tr>)}</tbody>
       </table>
-    </div>
+    </section>
+  </figure>;
+}
+
+function TransferTime() {
+  const [rate, setRate] = useState(20);
+  const seconds = 80 / rate;
+  return <figure className="foundation-visual measurement">
+    <figcaption><strong>Send the same 10 MB file / 传送同一个 10 MB 文件</strong></figcaption>
+    <fieldset className="packet-filters" aria-label="Payload rate / 有效速率">
+      {[10, 20, 40].map(value => <button type="button" key={value} aria-pressed={value === rate} onClick={() => setRate(value)}>{value} Mb/s</button>)}
+    </fieldset>
+    <div className="time-ruler" aria-hidden="true"><span style={{width: `${seconds / 8 * 100}%`}}/></div>
+    <div className="ruler-scale" aria-hidden="true"><span>0 s</span><span>4 s</span><span>8 s</span></div>
+    <output>80 Mb ÷ {rate} Mb/s = <strong>{seconds} seconds / 秒</strong></output>
+  </figure>;
+}
+
+function ErrorBudget() {
+  const [failed, setFailed] = useState(6);
+  const remaining = 10 - failed;
+  return <figure className="foundation-visual measurement">
+    <figcaption><strong>10,000 requests · Target 99.9% / 一万次请求，成功率目标 99.9%</strong></figcaption>
+    <fieldset className="packet-filters" aria-label="Select failed requests / 选择失败次数">
+      {[6, 10, 11].map(value => <button type="button" key={value} aria-pressed={value === failed} onClick={() => setFailed(value)}>{value} failed / {value} 次失败</button>)}
+    </fieldset>
+    <div className="budget-cells" aria-hidden="true">{Array.from({length: 10}, (_, i) => <span key={i} className={i < failed ? 'used' : ''}>{i < failed ? '×' : '·'}</span>)}</div>
+    <output>{((10000 - failed) / 100).toFixed(2)}% success / 成功率 · <strong>{remaining >= 0 ? `${remaining} of 10 left / 剩余 ${remaining} 次` : 'Over budget by 1 / 超出预算 1 次'}</strong></output>
   </figure>;
 }
 
 export function FoundationVisual({ lessonId, section, lab = false }: { lessonId: string; section?: number; lab?: boolean }) {
   if (lessonId === 'n14' && (lab || section === 1)) return <PacketTable />;
   if (lab) return null;
+  if (lessonId === 'n16' && section === 0) return <TransferTime />;
+  if (lessonId === 's11' && section === 2) return <ErrorBudget />;
 
   if (lessonId === 'n13' && section === 2) return <figure className="foundation-visual">
     <figcaption><strong>The first frame on the wire / 链路上的第一个数据帧</strong></figcaption>

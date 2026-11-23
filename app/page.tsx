@@ -22,6 +22,11 @@ function B({ en, zh }: { en: string; zh: string }) {
   return <span className="bi"><span lang="en" className="bi-en">{en}</span><span lang="zh-CN" className="bi-zh">{zh}</span></span>;
 }
 
+function HardwareBackdrop({ track }: { track: 'network' | 'system' }) {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  return <img className="hardware-backdrop" src={`${base}/hardware/${track}-bench.jpg`} alt="" fetchPriority="high" />;
+}
+
 function commandText(text: string) {
   return text.split('\n').map(line => commandTranslations[line] ? commandTranslations[line] + ' / ' + line.replace(/^[#!] /, '') : line).join('\n');
 }
@@ -176,7 +181,7 @@ function LearningSpace() {
     <Sidebar className="site-sidebar">
       <SidebarHeader className="brand">
         <div className="brand-mark"><Network size={23} /></div>
-        <div>Engineer<span>PATH / 学习手册</span></div>
+        <div>Engineer Path<span>工程学习手册</span></div>
       </SidebarHeader>
       <SidebarContent className="side-content">
         <SidebarMenu>
@@ -199,7 +204,7 @@ function LearningSpace() {
         })}
       </SidebarContent>
     </Sidebar>
-    <main className="main" data-theme-track={selected?.track ?? (view === 'packet' ? 'network' : track)}>
+    <main className="main" data-surface={selected ? 'lesson' : view} data-theme-track={selected?.track ?? (view === 'packet' ? 'network' : track)}>
       <header className="topbar">
         <div><SidebarTrigger aria-label="Toggle navigation / 展开或收起导航" /><b><B en={views[view].en} zh={views[view].zh} /></b></div>
         <span className="language">EN + 中文</span>
@@ -223,6 +228,7 @@ function LearningSpace() {
               </TabsList>
               <TabsContent value={track}>
                 <header className="atlas-cover">
+                  <HardwareBackdrop track={track}/>
                   <div className="atlas-title">
                     <h1>{track === 'network' ? <B en="Network engineering" zh="网络工程学习台"/> : <B en="Systems engineering" zh="系统工程学习台"/>}</h1>
                     <p>{track === 'network'
@@ -231,9 +237,14 @@ function LearningSpace() {
                     <a className="atlas-browse" href="#catalog-title"><BookOpen size={16} aria-hidden="true"/><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={16} aria-hidden="true"/></a>
                     <a className="atlas-questions" href="#work-questions"><span lang="en">Find a work question</span><span lang="zh-CN">按问题选课</span></a>
                   </div>
-                  <PathDiagram key={track} track={track} />
+                  <div className="study-progress">
+                    <label htmlFor="track-progress"><B en="Track progress" zh="本方向进度" /></label>
+                    <strong>{doneCount} / {trackLessons.length}</strong>
+                    <progress id="track-progress" value={doneCount} max={trackLessons.length} />
+                    <p><B en="Saved in this browser" zh="进度保存在当前浏览器" /></p>
+                  </div>
                 </header>
-                <section className="study-dashboard" aria-label="Your progress / 学习进度">
+                <section className="study-dashboard" aria-label="Study workbench / 学习工作台">
                   <div className="study-next">
                     <div className="study-icon"><BookOpen size={24} aria-hidden="true" /></div>
                     <div>
@@ -241,15 +252,10 @@ function LearningSpace() {
                       <h2><B en={resumeLesson?.en ?? 'All lessons completed'} zh={resumeLesson?.title ?? '已完成全部课程'} /></h2>
                     </div>
                     <button className="primary-button" onClick={() => openLesson(resumeLesson ?? trackLessons[0])}>
-                      {resumeLesson ? <B en="Open lesson" zh="打开课程" /> : <B en="Review from the start" zh="从头复习" />}
+                      {resumeLesson ? <B en="Open lesson" zh="打开课程" /> : <B en="Review from the start" zh="从头复习" />}<ArrowRight aria-hidden="true" size={16}/>
                     </button>
                   </div>
-                  <div className="study-progress">
-                    <label htmlFor="track-progress"><B en="Track progress" zh="本方向进度" /></label>
-                    <strong>{doneCount} / {trackLessons.length}</strong>
-                    <progress id="track-progress" value={doneCount} max={trackLessons.length} />
-                    <p><B en="Saved in this browser" zh="进度保存在当前浏览器" /></p>
-                  </div>
+                  <PathDiagram key={track} track={track} />
                 </section>
               </TabsContent>
             </Tabs>
@@ -337,7 +343,7 @@ function LessonView({ lesson: l, parentLesson, onOpenLesson, onBack, backToPacke
  const packetLab=packetTracerLabForLesson(l.id === 'n13' ? 'n01' : l.id);
  return <article className="reader">
   <button className="back" onClick={onBack}><ChevronLeft size={16}/><B en={parentLesson ? 'Return to '+parentLesson.en : backToPacket ? 'Back to Packet Tracer labs' : 'Back to learning path'} zh={parentLesson ? '返回原课 · '+parentLesson.title : backToPacket ? '返回 Packet Tracer 实验' : '返回学习路径'}/></button>
-  <div className="reader-cover"><div className="reader-orbit" aria-hidden="true"/><p className="reader-domain">{l.track === 'network' ? <Network size={17} aria-hidden="true"/> : <Server size={17} aria-hidden="true"/>}<span>{l.id.toUpperCase()}</span><B en={stageNames[l.stage]} zh={stages.find(stage => stage.key === l.stage)?.name ?? l.stage}/></p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
+  <div className="reader-cover"><HardwareBackdrop track={l.track}/><p className="reader-domain">{l.track === 'network' ? <Network size={17} aria-hidden="true"/> : <Server size={17} aria-hidden="true"/>}<span>{l.id.toUpperCase()}</span><B en={stageNames[l.stage]} zh={stages.find(stage => stage.key === l.stage)?.name ?? l.stage}/></p><h1><B en={l.en} zh={l.title}/></h1><p className="reader-summary"><B en={e.summary} zh={l.summary}/></p><div className="reader-meta"><span><Clock3 size={15}/>{l.minutes} MIN</span><span><FlaskConical size={15}/>HANDS-ON LAB / 动手实验</span>{(lessonDiagrams[l.id] || hasFoundationVisual(l.id)) && <span><Images size={15}/>VISUAL GUIDE / 图解</span>}</div></div>
   <Tabs defaultValue="read">
    <TabsList className="reader-tabs">
     <TabsTrigger value="read"><B en="Concepts" zh="知识讲解"/></TabsTrigger>

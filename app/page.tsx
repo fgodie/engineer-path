@@ -190,8 +190,8 @@ function LearningSpace() {
           {(Object.keys(views) as View[]).map(id => {
             const { Icon, en, zh } = views[id];
             return <SidebarMenuItem key={id}>
-              <SidebarMenuButton className="nav-item" isActive={view === id} onClick={() => navigate(id)}>
-                <Icon aria-hidden="true" /><B en={en} zh={zh} />
+              <SidebarMenuButton className="nav-item" aria-current={view === id ? 'page' : undefined} isActive={view === id} onClick={() => navigate(id)}>
+                <span className="nav-glyph"><Icon aria-hidden="true" /></span><B en={en} zh={zh} />
               </SidebarMenuButton>
             </SidebarMenuItem>;
           })}
@@ -200,7 +200,7 @@ function LearningSpace() {
         <p className="overline side-label"><B en="Learning tracks" zh="学习方向" /></p>
         {(Object.keys(tracks) as Track[]).map(id => {
           const { Icon, en, zh } = tracks[id];
-          return <button type="button" key={id} className={`track-nav ${view === 'courses' && track === id ? 'chosen' : ''}`} onClick={() => chooseTrack(id)}>
+          return <button type="button" key={id} data-direction={id} aria-pressed={view === 'courses' && track === id} className={`track-nav ${view === 'courses' && track === id ? 'chosen' : ''}`} onClick={() => chooseTrack(id)}>
             <Icon size={18} aria-hidden="true" /><B en={en} zh={zh} />
           </button>;
         })}
@@ -220,10 +220,13 @@ function LearningSpace() {
             <div className="workspace">
             {view === 'courses' ? <>
             <Tabs value={track} onValueChange={value => chooseTrack(value as Track)}>
-              <TabsList id="track-selector" className="track-tabs">
+              <TabsList aria-label="Learning tracks / 学习方向" id="track-selector" className="track-tabs">
                 {(Object.keys(tracks) as Track[]).map(id => {
                   const { Icon, en, zh } = tracks[id];
-                  return <TabsTrigger value={id} key={id}><Icon aria-hidden="true" /><B en={en} zh={zh} /></TabsTrigger>;
+                  return <TabsTrigger value={id} key={id} data-direction={id}>
+                    <NightBackdrop track={id}/><Icon aria-hidden="true" /><B en={en} zh={zh} />
+                    <Check className="direction-check" aria-hidden="true" />
+                  </TabsTrigger>;
                 })}
               </TabsList>
               <TabsContent value={track}>
@@ -382,9 +385,9 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
  return <Tabs className="lesson-layout" defaultValue="read" onValueChange={revealSection}>
   <Topbar view={view} headerRef={headerRef}>
     <TabsList className="lesson-nav" aria-label="Lesson sections / 课程栏目">
-      <TabsTrigger value="read"><B en="Concepts" zh="知识讲解"/></TabsTrigger>
-      <TabsTrigger value="lab"><B en="Hands-on lab" zh="动手实验"/></TabsTrigger>
-      <TabsTrigger value="quiz"><B en="Knowledge check" zh="课后自测"/></TabsTrigger>
+      <TabsTrigger value="read"><BookOpen aria-hidden="true"/><B en="Concepts" zh="知识讲解"/></TabsTrigger>
+      <TabsTrigger value="lab"><FlaskConical aria-hidden="true"/><B en="Hands-on lab" zh="动手实验"/></TabsTrigger>
+      <TabsTrigger value="quiz"><Check aria-hidden="true"/><B en="Knowledge check" zh="课后自测"/></TabsTrigger>
     </TabsList>
   </Topbar>
   <div className="workspace"><article className="reader">

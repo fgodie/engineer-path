@@ -886,3 +886,83 @@ body:has(.main[data-theme-track=system]) {
   .section-cover::before {background:linear-gradient(100deg,#0b1424f5,#101729d9 70%,#131a2d99);}
   .main .reader:not(.role-comparison,.reference-library) {padding: .85rem;}
 }
+
+/* Navigation has three distinct control shapes: destinations, tracks and lesson sections. */
+.side-content .nav-item {
+  min-height: 55px; gap: .7rem!important; padding: .45rem .6rem!important;
+  color: #d5dfef; border: 0!important; border-radius: 3px!important;
+}
+.side-content .nav-item .nav-glyph {
+  display: grid; place-items: center; flex: none; width: 32px; height: 32px;
+  border: 1px solid #40465e; border-radius: 8px 3px; color: #b2c5d9; background: #1a2030;
+}
+.nav-glyph svg {width: 16px; height: 16px;}
+.side-content .nav-item:hover, .side-content .track-nav:hover {background: #1c2234!important;}
+.side-content .nav-item[data-active] {
+  background: linear-gradient(90deg,var(--bench-tint),transparent)!important;
+  box-shadow: none!important; color: #fff!important;
+}
+.side-content .nav-item[data-active] .nav-glyph {border-color: var(--bench-accent); background: var(--bench-accent); color: #101a29;}
+.side-content .nav-item[data-active]::after {
+  content: ''; width: 6px; height: 6px; margin-inline-start:auto; margin-inline-end:4px;
+  border-top: 2px solid var(--bench-accent); border-right: 2px solid var(--bench-accent); transform: rotate(45deg);
+}
+.side-content .side-label .bi {display:flex; align-items:baseline; flex-wrap:wrap; gap:.45rem;}
+.side-content .side-label .bi-zh {margin:0;}
+[data-direction=network] {--direction-ink:#74fff2;}
+[data-direction=system] {--direction-ink:#ecb4ff;}
+.side-content .track-nav {
+  margin:0; padding:.55rem .8rem; gap:.8rem; border:0; border-radius:2px!important;
+}
+.side-content .track-nav svg {color:var(--direction-ink);}
+.side-content .track-nav.chosen {
+  color:var(--direction-ink)!important; background:#1b2132!important;
+  box-shadow:inset 2px 0 var(--direction-ink)!important;
+}
+.main .track-tabs#track-selector {
+  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); width:min(100%,37rem)!important;
+  gap:.55rem!important; min-height:0; padding:0!important; background:transparent!important; border:0!important;
+}
+.main #track-selector [role=tab] {
+  isolation:isolate; overflow:hidden; position:relative; justify-content:start!important; text-align:start;
+  height:auto; min-height:62px; gap:.65rem!important; padding:.5rem .85rem!important;
+  background:#131a2a!important; color:#eff5ff!important; border:1px solid #49556c!important; border-radius:2px 12px 2px 2px!important;
+}
+#track-selector .night-backdrop {width:62%;left:auto;right:0;object-position:75% 45%;opacity:.45;mask-image:linear-gradient(90deg,transparent,#000 75%);}
+.main #track-selector [aria-selected=true] {border-color:var(--direction-ink)!important;box-shadow:inset 3px 0 var(--direction-ink)!important;}
+#track-selector [aria-selected=true] .night-backdrop {opacity:.72;}
+#track-selector [role=tab] > svg {color:var(--direction-ink);}
+.main #track-selector .bi-zh {color:#c5d5e5!important;}
+#track-selector .direction-check {margin-inline-start:auto; opacity:0; background:#101522; border-radius:50%; padding:2px;}
+#track-selector [aria-selected=true] .direction-check {opacity:1;}
+.main .lesson-topbar .lesson-nav {
+  padding:3px; gap:2px; border:1px solid #41465e; border-radius:22px; background:#111625;
+}
+.main .lesson-nav [role=tab] {
+  display:flex; align-items:center; gap:.45rem; min-height:44px; border:0; border-radius:18px; padding:.25rem .85rem;
+}
+.main .lesson-nav [role=tab] > svg {width:15px; height:15px; color:#a9b8ce;}
+.main .lesson-nav [role=tab][aria-selected=true] {
+  background:var(--bench-accent); color:#101927; box-shadow:none;
+}
+.main .lesson-nav [aria-selected=true] :is(svg,.bi-en,.bi-zh) {color:inherit;}
+.main .lesson-nav [role=tab]:not([aria-selected=true]):hover {background:#242d43;}
+.side-content :is(.nav-item,.track-nav):focus-visible,
+.main :is(#track-selector,.lesson-nav) [role=tab]:focus-visible {
+  outline: 2px dashed #fff!important; outline-offset:-4px!important;
+}
+.main .lesson-nav [aria-selected=true]:focus-visible {outline-color:#172235!important;}
+@media (prefers-reduced-motion:no-preference) {
+  .nav-glyph, #track-selector .night-backdrop {transition:background-color .18s,color .18s,opacity .18s;}
+}
+@media (max-width:1120px) {
+  .main .lesson-nav [role=tab] {padding-inline:.45rem;}
+}
+@media (max-width:720px) {
+  .main .lesson-nav [role=tab] > svg {display:none;}
+  .main .lesson-nav [role=tab] {padding-inline:.15rem;}
+}
+@container console (max-width:28rem) {
+  .main #track-selector [role=tab] {gap:.4rem!important; padding:.45rem .55rem!important;}
+  #track-selector .direction-check {display:none;}
+}

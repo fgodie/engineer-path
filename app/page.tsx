@@ -10,6 +10,7 @@ import { lessons as originalLessons, stages, type Lesson } from './lessons';
 import { english as originalEnglish } from './english';
 import { addFoundations, foundationEnglish, resources } from './foundations';
 import { fieldCases } from './field-cases';
+import { DeviceInspector } from './device-inspector';
 import { PathDiagram } from './path-diagram';
 import { LessonFigure } from './lesson-figure';
 import { FoundationVisual, hasFoundationVisual } from './foundation-visual';
@@ -24,7 +25,7 @@ function B({ en, zh }: { en: string; zh: string }) {
 
 function HardwareBackdrop({ track }: { track: 'network' | 'system' }) {
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-  return <img className="hardware-backdrop" src={`${base}/hardware/${track}-bench.jpg`} alt="" fetchPriority="high" />;
+  return <img className="hardware-backdrop" src={`${base}/hardware/${track}-cutaway.jpg`} alt="" fetchPriority="high" />;
 }
 
 function commandText(text: string) {
@@ -228,7 +229,6 @@ function LearningSpace() {
               </TabsList>
               <TabsContent value={track}>
                 <header className="atlas-cover">
-                  <HardwareBackdrop track={track}/>
                   <div className="atlas-title">
                     <h1>{track === 'network' ? <B en="Network engineering" zh="网络工程学习台"/> : <B en="Systems engineering" zh="系统工程学习台"/>}</h1>
                     <p>{track === 'network'
@@ -237,6 +237,7 @@ function LearningSpace() {
                     <a className="atlas-browse" href="#catalog-title"><BookOpen size={16} aria-hidden="true"/><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={16} aria-hidden="true"/></a>
                     <a className="atlas-questions" href="#work-questions"><span lang="en">Find a work question</span><span lang="zh-CN">按问题选课</span></a>
                   </div>
+                  <DeviceInspector key={track} track={track}/>
                   <div className="study-progress">
                     <label htmlFor="track-progress"><B en="Track progress" zh="本方向进度" /></label>
                     <strong>{doneCount} / {trackLessons.length}</strong>

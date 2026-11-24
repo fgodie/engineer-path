@@ -3,7 +3,8 @@
 export const dynamic = 'force-static';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ArrowUpRight, BookOpen, Cable, Clock, HardDrive, Radio, Check, ChevronLeft, Circle, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
+import { flushSync } from 'react-dom';
+import { LayoutGrid, List, ArrowRight, ArrowUpRight, BookOpen, Cable, Clock, HardDrive, Radio, Check, ChevronLeft, Clock3, FlaskConical, Images, Layers, Network, Route, Search, Server } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { lessons as originalLessons, stages, type Lesson } from './lessons';
 import { english as originalEnglish } from './english';
@@ -69,6 +70,14 @@ type Progress = { completed: string[]; lastOpened: Partial<Record<Track, string>
 const emptyProgress: Progress = { completed: [], lastOpened: {} };
 const progressKey = 'engineer-path-progress-v1';
 
+function changeScreen(update: () => void) {
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.startViewTransition(() => flushSync(update));
+  } else {
+    update();
+  }
+}
+
 function searchText(value: string) {
   return value.normalize('NFKC').toLocaleLowerCase('en');
 }
@@ -109,6 +118,7 @@ export default function Home() {
   const [reviewTrail, setReviewTrail] = useState<Lesson[]>([]);
   const [view, setView] = useState<View>('courses');
   const [packetLabId, setPacketLabId] = useState<string>();
+  const [catalogLayout, setCatalogLayout] = useState<'cards' | 'list'>('cards');
   const [query, setQuery] = useState('');
   const [unfinished, setUnfinished] = useState(false);
   const [progress, setProgress] = useState<Progress>(emptyProgress);
@@ -128,30 +138,35 @@ export default function Home() {
     }
   }
 
-  function navigate(nextView: View) {
-    setView(nextView);
-    setSelected(null);
-    setReviewTrail([]);
-    window.scrollTo({ top: 0 });
+  function navigate(nextView: View, prepare?: () => void) {
+    changeScreen(() => {
+      prepare?.();
+      setView(nextView);
+      setSelected(null);
+      setReviewTrail([]);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
   }
 
   function chooseTrack(nextTrack: Track) {
-    setTrack(nextTrack);
-    setQuery('');
-    navigate('courses');
+    navigate('courses', () => {
+      setTrack(nextTrack);
+      setQuery('');
+    });
   }
 
   function openPacketLab(id: string) {
-    setPacketLabId(id);
-    navigate('packet');
+    navigate('packet', () => setPacketLabId(id));
   }
 
   function openLesson(lesson: Lesson, trail: Lesson[] = []) {
-    setReviewTrail(trail);
-    saveProgress({ ...progress, lastOpened: { ...progress.lastOpened, [lesson.track]: lesson.id } });
-    if (view === 'courses') setTrack(lesson.track);
-    setSelected(lesson);
-    window.scrollTo({ top: 0 });
+    changeScreen(() => {
+      setReviewTrail(trail);
+      saveProgress({ ...progress, lastOpened: { ...progress.lastOpened, [lesson.track]: lesson.id } });
+      if (view === 'courses') setTrack(lesson.track);
+      setSelected(lesson);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
   }
 
   function toggleCompleted() {
@@ -180,7 +195,7 @@ export default function Home() {
   return <div className="observatory">
     <header className="global-header">
       <button type="button" className="wordmark" onClick={() => navigate('courses')} aria-label="Engineer Path · 学习首页"><Network aria-hidden="true"/>Engineer Path</button>
-      <nav aria-label="Site navigation / 网站导航" className="global-sections">
+      <nav aria-label="Site navigation / 网站导航" className="global-sections" style={{'--destination': Object.keys(views).indexOf(view)} as React.CSSProperties}>
         {(Object.keys(views) as View[]).map(id => {
           const { Icon, en, zh } = views[id];
           return <button type="button" className="destination" key={id} aria-current={view === id ? 'page' : undefined} onClick={() => navigate(id)}>
@@ -231,13 +246,10 @@ export default function Home() {
                       </button>
                       <span className="launch-topic"><B en={resumeLesson?.en ?? trackLessons[0].en} zh={resumeLesson?.title ?? trackLessons[0].title}/></span>
                     </div>
-                    <div className="atlas-shortcuts">
-                      <a className="atlas-inspect" href="#inspect-device"><span lang="en">Inspect hardware</span><span lang="zh-CN">设备透视</span><ArrowRight size={14} aria-hidden="true"/></a>
-                      <a className="atlas-browse" href="#catalog-title"><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={14} aria-hidden="true"/></a>
-                      <a className="atlas-questions" href="#work-questions"><span lang="en">Work questions</span><span lang="zh-CN">按问题选课</span><ArrowRight size={14} aria-hidden="true"/></a>
-                    </div>
+
                   </div>
                   <div className="study-progress">
+                    <svg viewBox="0 0 48 48" className="completion-dial" aria-hidden="true"><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="19" pathLength="100" strokeDasharray={`${100 * doneCount / trackLessons.length} 100`}/></svg>
                     <label htmlFor="track-progress"><B en="Track progress" zh="本方向进度" /></label>
                     <strong>{doneCount} / {trackLessons.length}</strong>
                     <progress id="track-progress" value={doneCount} max={trackLessons.length} />
@@ -246,7 +258,12 @@ export default function Home() {
                 </header>
               </TabsContent>
             </Tabs>
-            <section className="course-catalog" aria-labelledby="catalog-title">
+                    <nav className="action-dock" aria-label="Track shortcuts / 方向快捷入口">
+                      <a className="atlas-inspect" href="#inspect-device"><HardDrive aria-hidden="true"/><span lang="en">Inspect hardware</span><span lang="zh-CN">设备透视</span><ArrowRight size={14} aria-hidden="true"/></a>
+                      <a className="atlas-browse" href="#catalog-title"><BookOpen aria-hidden="true"/><span lang="en">Browse {trackLessons.length} lessons</span><span lang="zh-CN">浏览 {trackLessons.length} 节课</span><ArrowRight size={14} aria-hidden="true"/></a>
+                      <a className="atlas-questions" href="#work-questions"><Route aria-hidden="true"/><span lang="en">Work questions</span><span lang="zh-CN">按问题选课</span><ArrowRight size={14} aria-hidden="true"/></a>
+                    </nav>
+            <section data-layout={catalogLayout} className="course-catalog" aria-labelledby="catalog-title">
               <div className="catalog-heading">
                 <h2 id="catalog-title"><B en="Course catalog" zh="课程目录" /></h2>
                 <output><B en={`${results.length} lessons${terms.length ? ' across both tracks' : ''}`} zh={`${results.length} 节课程${terms.length ? ' · 搜索两个方向' : ''}`} /></output>
@@ -258,6 +275,10 @@ export default function Home() {
                     <Search size={18} aria-hidden="true" />
                     <input id="lesson-search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search all lessons / 搜索所有课程" />
                   </div>
+                </div>
+                <div role="group" aria-label="Catalog layout / 目录视图" className="layout-switch">
+                  <button type="button" aria-label="Cards / 卡片视图" title="Cards / 卡片视图" aria-pressed={catalogLayout === 'cards'} onClick={()=>setCatalogLayout('cards')}><LayoutGrid size={17}/></button>
+                  <button type="button" aria-label="List / 列表视图" title="List / 列表视图" aria-pressed={catalogLayout === 'list'} onClick={()=>setCatalogLayout('list')}><List size={18}/></button>
                 </div>
                 <label className="catalog-filter"><input type="checkbox" checked={unfinished} onChange={event => setUnfinished(event.target.checked)} /><B en="Unfinished only" zh="只看未完成" /></label>
               </div>
@@ -285,8 +306,9 @@ export default function Home() {
                       {(lessonDiagrams[lesson.id] || hasFoundationVisual(lesson.id)) && <Images size={16} aria-label="Visual example / 图解示例" />}
                     </div>
                     <h4><B en={lesson.en} zh={lesson.title} /></h4>
+                    {catalogLayout === 'cards' && <p className="course-preview"><B en={english[lesson.id].summary} zh={lesson.summary}/></p>}
                     <footer>
-                      <span><Clock3 size={14} aria-hidden="true" /> {lesson.minutes} min</span>
+                      <ArrowUpRight className="course-open" size={18} aria-hidden="true"/><span><Clock3 size={14} aria-hidden="true" /> {lesson.minutes} min</span>
                       {progress.completed.includes(lesson.id) && <span className="completed-label"><Check size={15} aria-hidden="true" /> Done / 已完成</span>}
                     </footer>
                   </button>)}
@@ -416,7 +438,7 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
    <TabsContent value="quiz"><section className="quiz">
     <p className="overline"><B en="Check your understanding" zh="检查你的理解"/></p>
     <h2><B en={e.quiz.question} zh={l.quiz.question}/></h2>
-    <div className="options">{l.quiz.options.map((option,i)=><button key={option} aria-pressed={answer===i} className={answer===i?'selected':''} onClick={()=>setAnswer(i)}>{answer===i?<Check size={18}/>:<Circle size={18}/>}<B en={e.quiz.options[i]} zh={option}/></button>)}</div>
+    <div className="options">{l.quiz.options.map((option,i)=><button key={option} aria-pressed={answer===i} className={answer===i?'selected':''} onClick={()=>setAnswer(i)}><span className="answer-key" aria-hidden="true">{answer===i?<Check size={16}/>:String.fromCharCode(65+i)}</span><B en={e.quiz.options[i]} zh={option}/></button>)}</div>
     {answer!==null&&<div aria-live="polite" className={`feedback ${answer===l.quiz.correct?'correct':''}`}><b><B en={answer===l.quiz.correct?'Correct':'Try again'} zh={answer===l.quiz.correct?'回答正确':'再想一想'}/></b><p><B en={e.quiz.explanation} zh={l.quiz.explanation}/></p></div>}
    </section></TabsContent>
   </div>
@@ -432,6 +454,7 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
 }
 function Compare(){return <article className="reader role-comparison"><header className="section-cover role-cover"><NightBackdrop track="network" scene="orbit"/><h1><B en="Two roles, one shared foundation." zh="两种方向，一套共同基础。"/></h1><p className="reader-summary"><B en="Network engineers make connectivity reliable. Systems engineers make compute, identity and services reliable. Responsibilities vary by company and team." zh="Network Engineer 让连接可靠；System Engineer 让计算、身份与服务可靠。具体职责会随公司与团队而变化。"/></p></header><div className="compare-grid"><section><div className="role-hardware"><HardwareBackdrop track="network"/></div><Network/><h2><B en="Network Engineer" zh="网络工程师"/></h2><p><B en="Focus on how data reaches its destination." zh="关注数据如何抵达目标。"/></p><ul><li><B en="Switching, routing, wireless and WANs" zh="交换、路由、无线与广域网"/></li><li><B en="Network segmentation, perimeter security and VPNs" zh="网络分段、边界安全、VPN"/></li><li><B en="Troubleshooting packet loss, latency, routing and links" zh="丢包、延迟、路由与链路排障"/></li><li><B en="Network automation and architecture" zh="网络自动化与架构设计"/></li></ul></section><section><div className="role-hardware"><HardwareBackdrop track="system"/></div><Server/><h2><B en="System Engineer" zh="系统工程师"/></h2><p><B en="Focus on how services keep running." zh="关注服务如何持续运行。"/></p><ul><li><B en="Windows / Linux and patch management" zh="Windows / Linux 与补丁管理"/></li><li><B en="AD, permissions, virtualization and storage" zh="AD、权限、虚拟化与存储"/></li><li><B en="Backup, monitoring, high availability and disaster recovery" zh="备份、监控、高可用与灾难恢复"/></li><li><B en="Scripting, configuration management and infrastructure as code" zh="脚本、配置管理与基础设施即代码"/></li></ul></section></div><div className="objective"><span><B en="Shared foundations" zh="共同基础"/></span><p><B en="TCP/IP, DNS, DHCP, security fundamentals, log analysis, scripting, change management and layered troubleshooting. Start with networking fundamentals before choosing a primary track." zh="TCP/IP、DNS、DHCP、基础安全、日志分析、脚本、变更管理与分层排障。建议先学完网络基础，再选择主要方向。"/></p></div><h2><B en="How do both roles investigate an inaccessible website?" zh="遇到“网站打不开”，如何协作？"/></h2><p className="body-copy"><B en="The network team checks routes, links, firewalls and port connectivity. The systems team checks DNS records, service listeners, certificates, application logs and resources. Both use a shared timeline and packet-capture evidence instead of drawing conclusions from ping alone." zh="网络侧检查路由、链路、防火墙与端口连通性；系统侧检查 DNS 记录、服务监听、证书、应用日志与资源。两边用同一时间线和抓包证据定位故障，避免只凭 ping 结果下结论。"/></p></article>}
 function Resources() {
+  const [shelf,setShelf] = useState<'guides'|'readings'>('guides');
   const [filter,setFilter] = useState('');
   const matches = (parts: string[]) => searchText(parts.join(' ')).includes(searchText(filter.trim()));
   const curated = Object.values(resources);
@@ -442,17 +465,21 @@ function Resources() {
   return <article className="reader reference-library">
     <header className="section-cover library-cover"><NightBackdrop track="system" scene="orbit"/><h1><B en="Reference library" zh="学习资料库" /></h1></header>
     <label className="library-search"><Search size={18}/><span className="sr-only">Find a reference / 查找资料</span><input type="search" placeholder="Find a reference / 查找资料" value={filter} onChange={event=>setFilter(event.target.value)}/></label>
+    {!filter.trim() && <div className="shelf-switch" role="group" aria-label="Resource collections / 资料分类">
+      <button aria-pressed={shelf==='guides'} onClick={()=>setShelf('guides')}><BookOpen size={18}/><B en="Recommended guides" zh="推荐先读"/><strong>{guides.length}</strong></button>
+      <button aria-pressed={shelf==='readings'} onClick={()=>setShelf('readings')}><Layers size={18}/><B en="Topic references" zh="按主题阅读"/><strong>{readings.length}</strong></button>
+    </div>}
     {!guides.length && !readings.length && <p role="status"><B en="No references match this search." zh="没有找到匹配的资料。"/></p>}
-    {guides.length > 0 && <h2><B en="Start with these guides" zh="推荐先读" /></h2>}
-    <div className="reference-grid">
+    {filter.trim() && guides.length > 0 && <h2><B en="Start with these guides" zh="推荐先读" /></h2>}
+    {(shelf === 'guides' || filter.trim()) && <div className="reference-grid">
       {guides.map(resource => <a className="reference-card" key={resource.url} href={resource.url} target="_blank" rel="noreferrer">
         <div className="reference-source"><BookOpen size={16} aria-hidden="true" /><span>{new URL(resource.url).hostname}</span><ArrowUpRight size={16} aria-hidden="true" /></div>
         <h3><B {...resource.title} /></h3>
         <p><B {...resource.description} /></p>
       </a>)}
-    </div>
-    {readings.length > 0 && <h2><B en="Further reading by topic" zh="按主题继续阅读" /></h2>}
-    {readings.map(source => <a className="resource-row" key={source.url} href={source.url} target="_blank" rel="noreferrer">
+    </div>}
+    {filter.trim() && readings.length > 0 && <h2><B en="Further reading by topic" zh="按主题继续阅读" /></h2>}
+    {(shelf === 'readings' || filter.trim()) && readings.map(source => <a className="resource-row" key={source.url} href={source.url} target="_blank" rel="noreferrer">
       <BookOpen size={20} aria-hidden="true" />
       <div><B en={source.title} zh={referenceTitles[source.title]} /><small>{new URL(source.url).hostname}</small></div>
     </a>)}

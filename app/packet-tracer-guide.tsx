@@ -94,7 +94,7 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
         return <button type="button" key={item.id} className={item.id === lab.id ? 'active' : ''} aria-current={item.id === lab.id ? 'step' : undefined} onClick={() => { setLabId(item.id); window.scrollTo({ top: 0 }); }}>
           <span className="pt-lab-picker-top"><FlaskConical size={18} /><span>{count}/{item.steps.length}</span></span>
           <B value={item.title} />
-          <small>{item.minutes} MIN</small>
+          <small>{item.minutes} MIN</small><span className="lab-step-meter" aria-hidden="true">{item.steps.map((step,index)=><i key={step.title.en} data-checked={Array.isArray(progress[item.id]) && progress[item.id].includes(index)}/>)}</span>
         </button>;
       })}
     </nav>

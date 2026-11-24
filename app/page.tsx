@@ -10,6 +10,7 @@ import { lessons as originalLessons, stages, type Lesson } from './lessons';
 import { english as originalEnglish } from './english';
 import { addFoundations, foundationEnglish, resources } from './foundations';
 import { fieldCases } from './field-cases';
+import { CommandPanel } from './command-panel';
 import { NightBackdrop } from './night-backdrop';
 import { DeviceInspector } from './device-inspector';
 import { PathDiagram } from './path-diagram';
@@ -313,7 +314,7 @@ export default function Home() {
                     </footer>
                   </button>)}
                 </div>
-              </section>) : <div className="catalog-empty">
+              </section>) : <div className="catalog-empty" role="status"><Search size={28} aria-hidden="true"/>
                 <p><B en="No lessons match. Try a different term or clear the filters." zh="没有符合条件的课程。可以换个关键词或清除筛选。" /></p>
                 <button className="study-button" onClick={() => { setQuery(''); setUnfinished(false); }}><B en="Clear filters" zh="清除筛选" /></button>
               </div>}
@@ -344,7 +345,13 @@ export default function Home() {
             : view === 'compare' ? <Compare /> : <Resources />}
             </div>
           </>}
-      <footer className="page-footer"><span>ENGINEER PATH</span></footer>
+      <footer className="page-footer">
+        <div><strong>Engineer Path</strong><span>Learn. Build. Understand. / 学习 · 实践 · 理解</span></div>
+        <nav aria-label="Footer navigation / 页脚导航">
+          {(Object.keys(views) as View[]).map(id=><button key={id} onClick={()=>navigate(id)}><B en={compactDestinations[id][0]} zh={compactDestinations[id][1]}/></button>)}
+        </nav>
+        <button className="back-to-top" onClick={()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}><ArrowUpRight size={17}/><B en="Back to top" zh="返回顶部"/></button>
+      </footer>
     </main>
   </div>;
 }
@@ -372,6 +379,8 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
   completed: boolean;
   onToggleCompleted: () => void;
 }) {
+ const [activeChapter,setActiveChapter] = useState(0);
+ const [sectionTab,setSectionTab] = useState('read');
  const [answer,setAnswer]=useState<number|null>(null);
  const e=english[l.id];
  const example=fieldCases[l.id];
@@ -380,7 +389,22 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
  const headerRef = useRef<HTMLElement>(null);
  const panelsRef = useRef<HTMLDivElement>(null);
 
- function revealSection() {
+ useEffect(() => {
+   if (sectionTab !== 'read') return;
+   const sections = Array.from(document.querySelectorAll<HTMLElement>('.chapter-text .lesson-section'));
+   function updateChapter() {
+     const line = (headerRef.current?.getBoundingClientRect().bottom ?? 64) + 100;
+     let current = 0;
+     sections.forEach((section,index) => { if (section.getBoundingClientRect().top <= line) current = index; });
+     setActiveChapter(current);
+   }
+   window.addEventListener('scroll', updateChapter, {passive:true});
+   updateChapter();
+   return () => window.removeEventListener('scroll', updateChapter);
+ }, [sectionTab]);
+
+ function revealSection(value: unknown) {
+   setSectionTab(String(value));
    requestAnimationFrame(() => {
      const header = headerRef.current;
      const panels = panelsRef.current;
@@ -405,7 +429,7 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
    <TabsContent value="read" className="reading-spread">
     <nav className="chapter-index" aria-label="On this page / 本课目录">
       <strong><B en="In this lesson" zh="本课目录"/></strong>
-      {l.sections.map((section,i)=><a key={section.heading} href={`#chapter-${i}`}><B en={e.sections[i].heading} zh={section.heading}/></a>)}
+      {l.sections.map((section,i)=><a key={section.heading} aria-current={activeChapter===i ? 'location' : undefined} href={`#chapter-${i}`}><B en={e.sections[i].heading} zh={section.heading}/></a>)}
     </nav>
     <div className="chapter-text">
     <section className="field-case">
@@ -431,7 +455,7 @@ function LessonView({ view, lesson: l, parentLesson, onOpenLesson, onBack, backT
     <p className="lab-env"><B en={'Environment: '+e.lab.environment} zh={'实验环境：'+l.lab.environment}/></p>
     <ol className="lab-steps">{l.lab.steps.map((step,i)=><li key={step}><B en={e.lab.steps[i]} zh={step}/></li>)}</ol>
     <FoundationVisual lessonId={l.id} lab />
-    <pre><code>{commandText(l.lab.command)}</code></pre>
+    <CommandPanel code={commandText(l.lab.command)}/>
     <div className="objective"><span><B en="Acceptance criteria" zh="验收标准"/></span><p><B en={e.lab.verify} zh={l.lab.verify}/></p></div>
     {packetLab&&<div className="pt-lesson-link"><div><strong><B en="Build this in Packet Tracer" zh="在 Packet Tracer 中完成本课"/></strong><p><B en="Use the guided topology, exact ports and addresses, verification steps, and troubleshooting tips." zh="按引导查看拓扑、端口、地址、验收步骤和排错提示。"/></p></div><button className="primary-button" onClick={()=>onPacketTracer(packetLab.id)}><B en="Open guided lab" zh="打开引导实验"/><ArrowRight size={17}/></button></div>}
    </section></TabsContent>
@@ -469,7 +493,7 @@ function Resources() {
       <button aria-pressed={shelf==='guides'} onClick={()=>setShelf('guides')}><BookOpen size={18}/><B en="Recommended guides" zh="推荐先读"/><strong>{guides.length}</strong></button>
       <button aria-pressed={shelf==='readings'} onClick={()=>setShelf('readings')}><Layers size={18}/><B en="Topic references" zh="按主题阅读"/><strong>{readings.length}</strong></button>
     </div>}
-    {!guides.length && !readings.length && <p role="status"><B en="No references match this search." zh="没有找到匹配的资料。"/></p>}
+    {!guides.length && !readings.length && <div className="catalog-empty" role="status"><Search size={28} aria-hidden="true"/><p><B en="No references match this search." zh="没有找到匹配的资料。"/></p><button className="study-button" onClick={()=>setFilter('')}>Clear search / 清除搜索</button></div>}
     {filter.trim() && guides.length > 0 && <h2><B en="Start with these guides" zh="推荐先读" /></h2>}
     {(shelf === 'guides' || filter.trim()) && <div className="reference-grid">
       {guides.map(resource => <a className="reference-card" key={resource.url} href={resource.url} target="_blank" rel="noreferrer">

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowDownToLine, ArrowRight, ArrowUpRight, Check, Circle, Clock3, FlaskConical, RotateCcw } from 'lucide-react';
 import { packetTracerLabs, type Pair } from './packet-tracer-labs';
+import { CommandPanel } from './command-panel';
 import { NightBackdrop } from './night-backdrop';
 import { PacketStepVisual, PacketTopology, SimulationVisual } from './packet-tracer-visuals';
 
@@ -118,7 +119,7 @@ export function PacketTracerGuide({ initialLabId, onOpenLesson }: { initialLabId
         <div className="pt-step-number">{String(index + 1).padStart(2, '0')}</div>
         <div className="pt-step-content"><h4><B value={step.title} /></h4><p><B value={step.detail} /></p>
           {labScreenshots[lab.id].steps[index]?.length ? <div className="pt-real-gallery">{labScreenshots[lab.id].steps[index].map((shot) => <RealScreenshot key={shot.file} shot={shot} />)}</div> : <PacketStepVisual lab={lab} index={index} />}
-          {lab.configs.filter((config) => config.step === index).map((config) => <div className="pt-config" key={config.device}><h5>{config.device}</h5><pre><code>{config.code}</code></pre></div>)}
+          {lab.configs.filter((config) => config.step === index).map((config) => <div className="pt-config" key={config.device}><CommandPanel title={config.device} code={config.code}/></div>)}
           <div className="pt-step-expect"><strong><B value={{ en: 'What you should see', zh: '这一步应该看到' }} /></strong><p><B value={step.expect} /></p></div>
           <button type="button" className="pt-step-check" aria-pressed={done.includes(index)} onClick={() => toggleStep(index)}>{done.includes(index) ? <Check size={18} /> : <Circle size={18} />}<B value={done.includes(index) ? { en: 'Checked · click to undo', zh: '已完成 · 点击撤销' } : { en: 'I checked this result', zh: '已核对，完成这一步' }} /></button>
         </div>
